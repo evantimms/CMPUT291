@@ -53,8 +53,44 @@ CREATE TABLE cars(
     seats INT,
     gdate DATETIME,
     registered_driver VARCHAR(30) NOT NULL,
-    PRIMARY KEY (rno),
+    PRIMARY KEY (cno),
     FOREIGN KEY (registered_driver) REFERENCES members
+)
+
+CREATE TABLE rides(
+    rno INT NOT NULL,
+    price DECIMAL(19,4),
+    rdate DATETIME,
+    seats INT,
+    lugDesc VARCHAR(1000),
+    associated_with INT,
+    offered_by VARCHAR(30) NOT NULL,
+    /* offered by reference to driver by license number. I am not sure if it should 
+    be linked to members or should we have a separate table for drivers */  
+    ride_src VARCHAR(30) NOT NULL,
+    ride_dst VARCHAR(30) NOT NULL,
+    enroute_location VARCHAR(30),
+    PRIMARY KEY(rno),
+    FOREIGN KEY (associated_with) REFERENCES cars,
+    FOREIGN KEY (offered_by) REFERENCES drivers,
+    FOREIGN KEY(ride_src) REFERENCES locations,
+    FOREIGN KEY(ride_dst) REFERENCES locations,
+    FOREIGN KEY(enroute_location) REFERENCES locations
+)
+
+CREATE TABLE bookings(
+    bno INT NOT NULL,
+    seats INT,
+    cost DECIMAL(19,4),
+    for_ride INT NOT NULL,
+    reserved_for VARCHAR(30) NOT NULL,
+    drop_off VARCHAR(30),
+    pickup VARCHAR(30),
+    PRIMARY KEY(bno),
+    FOREIGN KEY (for_ride) REFERENCES rides,
+    FOREIGN KEY (reserved_for) REFERENCES members,
+    FOREIGN KEY(drop_off) REFERENCES locations,
+    FOREIGN KEY(pickup) REFERENCES locations
 )
 
 CREATE TABLE members(
