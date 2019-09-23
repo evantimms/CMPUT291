@@ -31,6 +31,21 @@ Requests: (NOT SURE YET)
     - p.k is location lcode + dst lcode + memember email
 */
 
+CREATE TABLE location(
+	lcode INT NOT NULL,
+	address VARCHAR(30),
+	province VARCHAR(30),
+	city VARCHAR(30),
+	PRIMARY KEY(lcode)
+)
+
+CREATE TABLE members (
+	email VARCHAR(30) NOT NULL,
+	name VARCHAR(30),
+	phone VARCHAR(30),
+	PRIMARY KEY(email)
+)
+
 CREATE TABLE reviews(
     rid INT NOT NULL,
     rdate DATETIME,
