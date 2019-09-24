@@ -10,9 +10,29 @@ can use a relationship to represent them but your way works too I believe.
 
 #---- Comments made by los ----#
 ** for peretti **
-- 
+- How are you distinguishing that a birth must have a mother but the father is 
+  optional?
+- Having mother/father as a relationship could make sense, however the diagram 
+  should still indicate that a mother or father could are also people. I don't 
+  belive relationships can exist in a "Is-A" relationship with another entity.
+- Same as above, but for partner 1, partner 2
+- Demerit entity lacks a primary key and appears to be drawn as a strong entity,
+- has_demerit should indicate there must be one and only one driver for that 
+  demerit (similar to ticket issued to a vehicle)
+
 ** for vanika **
-- 
+- Initially, I disagreed with having person 'has' birth_certification which also 
+  'has' a mother and 'has' a father. However, I think in retrospect this is the 
+  right way and I will have to update mine for the group. I think its the only 
+  way to represent that mother is not optional but father is.
+- Are you sure that License class is a weak entity? I can see license classes 
+  existing without anyone holding those licenses yet. Further, "id" seems like 
+  it could uniquely identify a license class.
+- I would agree demerit_notice is dependent on the driver, though.
+- I initially didn't think it would make sense to have ticket related 
+  to both registration and driver, however on rereading the assignment it does 
+  say twice it must be a registered vehicle. I will suggest your version for the 
+  gorup project
 
 #---- Comments made by vanika ----#
 ** for los **
