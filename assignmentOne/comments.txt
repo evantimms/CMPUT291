@@ -1,22 +1,31 @@
 #---- Comments made by peretti ----#
-for los
+** for los **
 - I think you are missing your arrows for the many to one relationships
 - I think you are also missing the thick lines for many-to-many relationships
-for vanika
+** for vanika **
 - Not sure why registration is in another 3-way relationship with ticket, would you be able
 to explain your thinking behind that one?
 - I don't think you need to make seperate objects for mother/father/partner1/partner2. I think you
 can use a relationship to represent them but your way works too I believe.
 
 #---- Comments made by los ----#
-for peretti
+** for peretti **
 - 
-for vanika
+** for vanika **
 - 
 
 #---- Comments made by vanika ----#
-for los
--
-for vanika
--
-
+** for los **
+- You have partner 1 and partner 2 as entities that are related together by the relationship "married", 
+however, I think you should have also showed that there is participationa constraints there. Same for 
+mother in "born" relationship.
+- Some other relationships are also missing arrows and bold lines to specify many-to-one relations and 
+participation constraints. For instance, License class and driver's license, tickets and traffic officer.
+- Overall, neat diagram and thanks for suggesting a software to allow for collaboration on ER diagrams.
+** for peretti **
+- The way you have directly referenced mother. father, partner 1 and partner to person makes sense in terms 
+of relationships, I am not totally sure how this will get translated to tables but it surely reduces redundancy.
+- You have only related ticket to vehicle, which may or may not be registered. Based on my understanding,
+a ticket can be issued to a registred vehicle and therefore, there should be a ternary relationship between 
+tickets, vehicle and registration. This is also the reasoning behind the question in your comment for me.
+- Other than that, your ER diagram very-well captured all the details of the description.
