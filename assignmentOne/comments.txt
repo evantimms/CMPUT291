@@ -1,8 +1,12 @@
 #---- Comments made by peretti ----#
 for los
-- 
+- I think you are missing your arrows for the many to one relationships
+- I think you are also missing the thick lines for many-to-many relationships
 for vanika
-- 
+- Not sure why registration is in another 3-way relationship with ticket, would you be able
+to explain your thinking behind that one?
+- I don't think you need to make seperate objects for mother/father/partner1/partner2. I think you
+can use a relationship to represent them but your way works too I believe.
 
 #---- Comments made by los ----#
 for peretti
