@@ -80,14 +80,12 @@ CREATE TABLE rides(
     lugDesc VARCHAR(1000),
     associated_with INT,
     offered_by VARCHAR(30) NOT NULL,
-    /* offered by reference to driver by license number. I am not sure if it should 
-    be linked to members or should we have a separate table for drivers */  
     ride_src VARCHAR(30) NOT NULL,
     ride_dst VARCHAR(30) NOT NULL,
     enroute_location VARCHAR(30),
     PRIMARY KEY(rno),
     FOREIGN KEY (associated_with) REFERENCES cars,
-    FOREIGN KEY (offered_by) REFERENCES drivers,
+    FOREIGN KEY (offered_by) REFERENCES members,
     FOREIGN KEY(ride_src) REFERENCES locations,
     FOREIGN KEY(ride_dst) REFERENCES locations,
     FOREIGN KEY(enroute_location) REFERENCES locations
@@ -108,13 +106,6 @@ CREATE TABLE bookings(
     FOREIGN KEY(pickup) REFERENCES locations
 )
 
-CREATE TABLE members(
-    phone CHAR(9),
-    name VARCHAR(30),
-    email VARCHAR(30),
-    PRIMARY KEY(email)
-)
-
 CREATE TABLE requests (
     amount INT,
     qdate DATETIME,
@@ -126,3 +117,7 @@ CREATE TABLE requests (
     FOREIGN KEY(request_email) REFERENCES members,
     PRIMARY KEY (dst_code, lc_code, request_email)
 )
+
+
+/* Nothing identifies drivers and their licNo. 
+Should we have a separate table for drivers? Or is there another way to map it? */  
