@@ -27,6 +27,13 @@ CREATE TABLE reviews(
     FOREIGN KEY (ride_number) REFERENCES rides
 )
 
+CREATE TABLE drivers(
+	licNo INT NOT NULL,
+	email VARCHAR(30),
+	PRIMARY KEY(licNo),
+	FOREIGN KEY (email) REFERENCES members ON DELETE CASCADE
+)
+
 CREATE TABLE cars(
     cno INT NOT NULL,
     make VARCHAR(10),
@@ -34,9 +41,9 @@ CREATE TABLE cars(
     model_year DATETIME,
     seats INT,
     gdate DATETIME,
-    registered_driver VARCHAR(30) NOT NULL,
+    registered_driver INT NOT NULL,
     PRIMARY KEY (cno),
-    FOREIGN KEY (registered_driver) REFERENCES members ON DELETE CASCADE
+    FOREIGN KEY (registered_driver) REFERENCES drivers ON DELETE CASCADE
 )
 
 CREATE TABLE rides(
@@ -46,27 +53,27 @@ CREATE TABLE rides(
     seats INT,
     lugDesc VARCHAR(1000),
     associated_with INT,
-    offered_by VARCHAR(30) NOT NULL,
+    offered_by INT NOT NULL,
     ride_src VARCHAR(30) NOT NULL,
     ride_dst VARCHAR(30) NOT NULL,
     enroute_location VARCHAR(30),
     PRIMARY KEY(rno),
     FOREIGN KEY (associated_with) REFERENCES cars,
-    FOREIGN KEY (offered_by) REFERENCES members,
+    FOREIGN KEY (offered_by) REFERENCES drivers,
     FOREIGN KEY(ride_src) REFERENCES locations,
     FOREIGN KEY(ride_dst) REFERENCES locations,
-    FOREIGN KEY(enroute_location) REFERENCES locations ON DELETE CASCADE
+    FOREIGN KEY(enroute_location) REFERENCES
 )
 
 CREATE TABLE bookings(
-    bno INT NOT NULL,
+    booking_number INT NOT NULL,
     seats INT,
     cost DECIMAL(19,4),
     for_ride INT NOT NULL,
     reserved_for VARCHAR(30) NOT NULL,
     drop_off VARCHAR(30),
     pickup VARCHAR(30),
-    PRIMARY KEY(bno),
+    PRIMARY KEY(booking_number),
     FOREIGN KEY (for_ride) REFERENCES rides,
     FOREIGN KEY (reserved_for) REFERENCES members,
     FOREIGN KEY(drop_off) REFERENCES locations,
@@ -76,11 +83,11 @@ CREATE TABLE bookings(
 CREATE TABLE requests (
     amount INT,
     qdate DATETIME,
-    dst_code VARCHAR(30),
-    lc_code VARCHAR(30),
-    request_email VARCHAR(30) NOT NULL,
-    FOREIGN KEY(dst_code) REFERENCES locations,
-    FOREIGN KEY(lc_code) REFERENCES locations,
+    drop_off VARCHAR(30),
+    pick_up VARCHAR(30),
+    email VARCHAR(30) NOT NULL,
+    FOREIGN KEY(drop_off) REFERENCES locations,
+    FOREIGN KEY(pick_up) REFERENCES locations,
     FOREIGN KEY(request_email) REFERENCES members,
-    PRIMARY KEY (dst_code, lc_code, request_email)
+    PRIMARY KEY (dst_code, lc_code, email)
 )
