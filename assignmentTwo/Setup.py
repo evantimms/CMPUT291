@@ -24,4 +24,4 @@ def runSetup():
     print('table created')
     populate(c)
     print('populated table')
-    return c
+    return c, conn
