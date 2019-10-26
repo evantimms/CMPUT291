@@ -18,8 +18,8 @@ class Main():
         args = cmd.split()
         if len(args) > 2:
             raise Exception('Invalid input. Command requires min 2 arguements')
-        elif not self.user:
-            raise Exception('Please login')
+        # elif not self.user:
+        #     raise Exception('Please login')
 
         fns = {
             'login': self.login,
@@ -29,6 +29,9 @@ class Main():
             'process': self.process,
             'getabstract': self.getAbstract
         }
+        # todo
+
+        # process input
         fns[args[0]](args[1:])
 
     def login(self):
@@ -41,7 +44,7 @@ class Main():
         Log out current user
         """
 
-    def register(self):
+    def register(self, args):
         """
         Register an object
         """
@@ -65,7 +68,7 @@ class Main():
 if __name__ == "__main__":
     m = Main(':memory:') # replace with db name
     m.setup()
-    if m.login() or True: # remove after login implemented
+    if m or True: # remove after login implemented
         while True:
             user_in = input("Enter a command: ")
             m.execute(user_in)
