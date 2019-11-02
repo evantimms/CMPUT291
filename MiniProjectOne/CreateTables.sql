@@ -5,6 +5,8 @@ drop table if exists vehicles;
 drop table if exists marriages;
 drop table if exists births;
 drop table if exists persons;
+drop table if exists payments;
+drop table if exists users;
 
 PRAGMA foreign_keys = ON;
 
@@ -81,5 +83,22 @@ create table demeritNotices (
   points	int, 
   desc		text,
   primary key (ddate,fname,lname),
+  foreign key (fname,lname) references persons
+);
+create table payments (
+  tno		int,
+  pdate		date,
+  amount	int,
+  primary key (tno, pdate),
+  foreign key (tno) references tickets
+);
+create table users (
+  uid		char(8),
+  pwd		char(8),
+  utype		char(1),	-- 'a' for agents, 'o' for officers
+  fname		char(12),
+  lname		char(12), 
+  city		char(15),
+  primary key(uid),
   foreign key (fname,lname) references persons
 );
