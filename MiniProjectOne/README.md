@@ -10,3 +10,5 @@
 - Refactoring
 - Complete error handling
 - Deal w/ string insensitivties
+- Finish .help command
+- Testing

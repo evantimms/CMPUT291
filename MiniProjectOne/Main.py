@@ -25,7 +25,7 @@ HELP_COMMANDS = {
 dt = datetime.datetime
 
 # TODO: Refactor this to handle the cursor instead of the main class
-class DBCalls():
+class DBApi():
     def __init__(self, db_name):
         self.conn = sqlite3.connect(db_name)
         self.c = self.conn.cursor()
@@ -35,7 +35,7 @@ class Sanitizer():
         """ 
         Sanitize a user input to prevent SQL Injection
         """
-        # TODO
+        # TODO: Implement
         return args
 
 class Main():
@@ -210,7 +210,7 @@ class Main():
                     p2Lname
                 )
             )
-
+            # commit changes to DB
             self.conn.commit()
         else:
             raise Exception("Missing Argument(s)")
@@ -301,7 +301,7 @@ class Main():
     def getPerson(self, fname, lname):
         """
         Get a person from the data base
-        # TODO: Move to db class
+        # TODO: Move to DBApi class
         """
         self.c.execute(
             "SELECT * FROM persons WHERE fname = ? AND lname = ?",
@@ -312,7 +312,7 @@ class Main():
     def createPerson(self, fname, lname):
         """
         Create a new person in the persons table
-        # TODO: Move to db class
+        # TODO: Move to DBApi class
         """
         bdate = input("Enter birthday: ")
         bplace = input("Enter birth place: ")
