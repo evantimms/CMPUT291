@@ -147,12 +147,20 @@ class Main():
 
             # enter new person into births and persons
             if not self.getPerson(fname, lname):
+
+                # enter Mom's phone and address for the newborn
+                self.c.execute(
+                    "SELECT address, phone FROM persons WHERE fname = ? AND lname = ?",
+                    (mFname, mLname)
+                )
+                values = self.c.fetchone()
+
                 self.c.execute(
                     """
                     INSERT INTO persons (fname, lname, bdate, bplace, address, phone)
                     VALUES (?,?,?,?,?,?)
                     """,
-                    (fname, lname, bdate, bplace, None, None) # enter Mom's phone and address
+                    (fname, lname, bdate, bplace, values[0], values[1]) 
                 )
 
                 self.c.execute(
@@ -297,9 +305,46 @@ class Main():
             )
 
             self.conn.commit()
+        # Process a payment
+        elif args[0] == "-p":
+            tno = args[1]
+            amount = args[2]
+            fine = args[3]
+            pdate = dt.now()
+
+            # calculate the amount paid for a given ticket
+            amountPaid = self.c.execute(
+                            """
+                            SELECT SUM(amount) FROM payments p, tickets t WHERE p.tno = t.tno
+                            AND p.date < dt.now()
+                            """
+                        )
+
+            # accept payment if amountPaid + payment Amount <= fine, otherwise raise error
+            totalAmount = amountPaid + amount
+
+            if fine >= totalAmount:
+                # Update fine amount for the ticket
+                fineRemaining = fine - totalAmount
+                self.c.execute(
+                    "UPDATE tickets SET fine = ? WHERE tno = ?",
+                    (fineRemaining, tno)
+                )
+                self.conn.commit()
+
+                # Insert amount into payments table
+                self.c.execute(
+                    """
+                    INSERT INTO payments (tno, pdate, amount) 
+                    VALUES (?,?,?)
+                    """,
+                    (tno, pdate, amount)
+                )
+                self.conn.commit()
+            else:
+                raise Exception("Amount paid exceeds ticket fine")
         else:
-            # TODO: Process a payment
-            pass
+            raise Exception("Missing Argument(s)")
 
     def getAbstract(self, args):
         """
