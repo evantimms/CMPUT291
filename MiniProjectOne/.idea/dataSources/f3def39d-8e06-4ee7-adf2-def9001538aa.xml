@@ -1,0 +1,440 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataSource name="DB">
+  <database-model serializer="dbm" dbms="SQLITE" family-id="SQLITE" format-version="4.16">
+    <root id="1">
+      <ServerVersion>3.25.1</ServerVersion>
+    </root>
+    <schema id="2" parent="1" name="main">
+      <Current>1</Current>
+    </schema>
+    <collation id="3" parent="1" name="BINARY"/>
+    <collation id="4" parent="1" name="NOCASE"/>
+    <collation id="5" parent="1" name="RTRIM"/>
+    <table id="6" parent="2" name="births"/>
+    <table id="7" parent="2" name="demeritNotices"/>
+    <table id="8" parent="2" name="marriages"/>
+    <table id="9" parent="2" name="payments"/>
+    <table id="10" parent="2" name="persons"/>
+    <table id="11" parent="2" name="registrations"/>
+    <table id="12" parent="2" name="sqlite_master">
+      <System>1</System>
+    </table>
+    <table id="13" parent="2" name="tickets"/>
+    <table id="14" parent="2" name="users"/>
+    <table id="15" parent="2" name="vehicles"/>
+    <column id="16" parent="6" name="regno">
+      <Position>1</Position>
+      <DataType>int|0s</DataType>
+    </column>
+    <column id="17" parent="6" name="fname">
+      <Position>2</Position>
+      <DataType>char(12)|0s</DataType>
+    </column>
+    <column id="18" parent="6" name="lname">
+      <Position>3</Position>
+      <DataType>char(12)|0s</DataType>
+    </column>
+    <column id="19" parent="6" name="regdate">
+      <Position>4</Position>
+      <DataType>date|0s</DataType>
+    </column>
+    <column id="20" parent="6" name="regplace">
+      <Position>5</Position>
+      <DataType>char(20)|0s</DataType>
+    </column>
+    <column id="21" parent="6" name="gender">
+      <Position>6</Position>
+      <DataType>char(1)|0s</DataType>
+    </column>
+    <column id="22" parent="6" name="f_fname">
+      <Position>7</Position>
+      <DataType>char(12)|0s</DataType>
+    </column>
+    <column id="23" parent="6" name="f_lname">
+      <Position>8</Position>
+      <DataType>char(12)|0s</DataType>
+    </column>
+    <column id="24" parent="6" name="m_fname">
+      <Position>9</Position>
+      <DataType>char(12)|0s</DataType>
+    </column>
+    <column id="25" parent="6" name="m_lname">
+      <Position>10</Position>
+      <DataType>char(12)|0s</DataType>
+    </column>
+    <index id="26" parent="6" name="sqlite_autoindex_births_1">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>regno</ColNames>
+      <ColumnCollations></ColumnCollations>
+      <Unique>1</Unique>
+    </index>
+    <key id="27" parent="6">
+      <ColNames>regno</ColNames>
+      <Primary>1</Primary>
+      <UnderlyingIndexName>sqlite_autoindex_births_1</UnderlyingIndexName>
+    </key>
+    <foreign-key id="28" parent="6">
+      <ColNames>fname
+lname</ColNames>
+      <RefTableName>persons</RefTableName>
+      <RefColNames>fname
+lname</RefColNames>
+    </foreign-key>
+    <foreign-key id="29" parent="6">
+      <ColNames>f_fname
+f_lname</ColNames>
+      <RefTableName>persons</RefTableName>
+      <RefColNames>fname
+lname</RefColNames>
+    </foreign-key>
+    <foreign-key id="30" parent="6">
+      <ColNames>m_fname
+m_lname</ColNames>
+      <RefTableName>persons</RefTableName>
+      <RefColNames>fname
+lname</RefColNames>
+    </foreign-key>
+    <column id="31" parent="7" name="ddate">
+      <Position>1</Position>
+      <DataType>date|0s</DataType>
+    </column>
+    <column id="32" parent="7" name="fname">
+      <Position>2</Position>
+      <DataType>char(12)|0s</DataType>
+    </column>
+    <column id="33" parent="7" name="lname">
+      <Position>3</Position>
+      <DataType>char(12)|0s</DataType>
+    </column>
+    <column id="34" parent="7" name="points">
+      <Position>4</Position>
+      <DataType>int|0s</DataType>
+    </column>
+    <column id="35" parent="7" name="desc">
+      <Position>5</Position>
+      <DataType>text|0s</DataType>
+    </column>
+    <index id="36" parent="7" name="sqlite_autoindex_demeritNotices_1">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>ddate
+fname
+lname</ColNames>
+      <ColumnCollations></ColumnCollations>
+      <Unique>1</Unique>
+    </index>
+    <key id="37" parent="7">
+      <ColNames>ddate
+fname
+lname</ColNames>
+      <Primary>1</Primary>
+      <UnderlyingIndexName>sqlite_autoindex_demeritNotices_1</UnderlyingIndexName>
+    </key>
+    <foreign-key id="38" parent="7">
+      <ColNames>fname
+lname</ColNames>
+      <RefTableName>persons</RefTableName>
+      <RefColNames>fname
+lname</RefColNames>
+    </foreign-key>
+    <column id="39" parent="8" name="regno">
+      <Position>1</Position>
+      <DataType>int|0s</DataType>
+    </column>
+    <column id="40" parent="8" name="regdate">
+      <Position>2</Position>
+      <DataType>date|0s</DataType>
+    </column>
+    <column id="41" parent="8" name="regplace">
+      <Position>3</Position>
+      <DataType>char(20)|0s</DataType>
+    </column>
+    <column id="42" parent="8" name="p1_fname">
+      <Position>4</Position>
+      <DataType>char(12)|0s</DataType>
+    </column>
+    <column id="43" parent="8" name="p1_lname">
+      <Position>5</Position>
+      <DataType>char(12)|0s</DataType>
+    </column>
+    <column id="44" parent="8" name="p2_fname">
+      <Position>6</Position>
+      <DataType>char(12)|0s</DataType>
+    </column>
+    <column id="45" parent="8" name="p2_lname">
+      <Position>7</Position>
+      <DataType>char(12)|0s</DataType>
+    </column>
+    <index id="46" parent="8" name="sqlite_autoindex_marriages_1">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>regno</ColNames>
+      <ColumnCollations></ColumnCollations>
+      <Unique>1</Unique>
+    </index>
+    <key id="47" parent="8">
+      <ColNames>regno</ColNames>
+      <Primary>1</Primary>
+      <UnderlyingIndexName>sqlite_autoindex_marriages_1</UnderlyingIndexName>
+    </key>
+    <foreign-key id="48" parent="8">
+      <ColNames>p1_fname
+p1_lname</ColNames>
+      <RefTableName>persons</RefTableName>
+      <RefColNames>fname
+lname</RefColNames>
+    </foreign-key>
+    <foreign-key id="49" parent="8">
+      <ColNames>p2_fname
+p2_lname</ColNames>
+      <RefTableName>persons</RefTableName>
+      <RefColNames>fname
+lname</RefColNames>
+    </foreign-key>
+    <column id="50" parent="9" name="tno">
+      <Position>1</Position>
+      <DataType>int|0s</DataType>
+    </column>
+    <column id="51" parent="9" name="pdate">
+      <Position>2</Position>
+      <DataType>date|0s</DataType>
+    </column>
+    <column id="52" parent="9" name="amount">
+      <Position>3</Position>
+      <DataType>int|0s</DataType>
+    </column>
+    <index id="53" parent="9" name="sqlite_autoindex_payments_1">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>tno
+pdate</ColNames>
+      <ColumnCollations></ColumnCollations>
+      <Unique>1</Unique>
+    </index>
+    <key id="54" parent="9">
+      <ColNames>tno
+pdate</ColNames>
+      <Primary>1</Primary>
+      <UnderlyingIndexName>sqlite_autoindex_payments_1</UnderlyingIndexName>
+    </key>
+    <foreign-key id="55" parent="9">
+      <ColNames>tno</ColNames>
+      <RefTableName>tickets</RefTableName>
+      <RefColNames>tno</RefColNames>
+    </foreign-key>
+    <column id="56" parent="10" name="fname">
+      <Position>1</Position>
+      <DataType>char(12)|0s</DataType>
+    </column>
+    <column id="57" parent="10" name="lname">
+      <Position>2</Position>
+      <DataType>char(12)|0s</DataType>
+    </column>
+    <column id="58" parent="10" name="bdate">
+      <Position>3</Position>
+      <DataType>date|0s</DataType>
+    </column>
+    <column id="59" parent="10" name="bplace">
+      <Position>4</Position>
+      <DataType>char(20)|0s</DataType>
+    </column>
+    <column id="60" parent="10" name="address">
+      <Position>5</Position>
+      <DataType>char(30)|0s</DataType>
+    </column>
+    <column id="61" parent="10" name="phone">
+      <Position>6</Position>
+      <DataType>char(12)|0s</DataType>
+    </column>
+    <index id="62" parent="10" name="sqlite_autoindex_persons_1">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>fname
+lname</ColNames>
+      <ColumnCollations></ColumnCollations>
+      <Unique>1</Unique>
+    </index>
+    <key id="63" parent="10">
+      <ColNames>fname
+lname</ColNames>
+      <Primary>1</Primary>
+      <UnderlyingIndexName>sqlite_autoindex_persons_1</UnderlyingIndexName>
+    </key>
+    <column id="64" parent="11" name="regno">
+      <Position>1</Position>
+      <DataType>int|0s</DataType>
+    </column>
+    <column id="65" parent="11" name="regdate">
+      <Position>2</Position>
+      <DataType>date|0s</DataType>
+    </column>
+    <column id="66" parent="11" name="expiry">
+      <Position>3</Position>
+      <DataType>date|0s</DataType>
+    </column>
+    <column id="67" parent="11" name="plate">
+      <Position>4</Position>
+      <DataType>char(7)|0s</DataType>
+    </column>
+    <column id="68" parent="11" name="vin">
+      <Position>5</Position>
+      <DataType>char(5)|0s</DataType>
+    </column>
+    <column id="69" parent="11" name="fname">
+      <Position>6</Position>
+      <DataType>char(12)|0s</DataType>
+    </column>
+    <column id="70" parent="11" name="lname">
+      <Position>7</Position>
+      <DataType>char(12)|0s</DataType>
+    </column>
+    <index id="71" parent="11" name="sqlite_autoindex_registrations_1">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>regno</ColNames>
+      <ColumnCollations></ColumnCollations>
+      <Unique>1</Unique>
+    </index>
+    <key id="72" parent="11">
+      <ColNames>regno</ColNames>
+      <Primary>1</Primary>
+      <UnderlyingIndexName>sqlite_autoindex_registrations_1</UnderlyingIndexName>
+    </key>
+    <foreign-key id="73" parent="11">
+      <ColNames>vin</ColNames>
+      <RefTableName>vehicles</RefTableName>
+      <RefColNames>vin</RefColNames>
+    </foreign-key>
+    <foreign-key id="74" parent="11">
+      <ColNames>fname
+lname</ColNames>
+      <RefTableName>persons</RefTableName>
+      <RefColNames>fname
+lname</RefColNames>
+    </foreign-key>
+    <column id="75" parent="12" name="type">
+      <Position>1</Position>
+      <DataType>text|0s</DataType>
+    </column>
+    <column id="76" parent="12" name="name">
+      <Position>2</Position>
+      <DataType>text|0s</DataType>
+    </column>
+    <column id="77" parent="12" name="tbl_name">
+      <Position>3</Position>
+      <DataType>text|0s</DataType>
+    </column>
+    <column id="78" parent="12" name="rootpage">
+      <Position>4</Position>
+      <DataType>int|0s</DataType>
+    </column>
+    <column id="79" parent="12" name="sql">
+      <Position>5</Position>
+      <DataType>text|0s</DataType>
+    </column>
+    <column id="80" parent="13" name="tno">
+      <Position>1</Position>
+      <DataType>int|0s</DataType>
+    </column>
+    <column id="81" parent="13" name="regno">
+      <Position>2</Position>
+      <DataType>int|0s</DataType>
+    </column>
+    <column id="82" parent="13" name="fine">
+      <Position>3</Position>
+      <DataType>int|0s</DataType>
+    </column>
+    <column id="83" parent="13" name="violation">
+      <Position>4</Position>
+      <DataType>text|0s</DataType>
+    </column>
+    <column id="84" parent="13" name="vdate">
+      <Position>5</Position>
+      <DataType>date|0s</DataType>
+    </column>
+    <index id="85" parent="13" name="sqlite_autoindex_tickets_1">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>tno</ColNames>
+      <ColumnCollations></ColumnCollations>
+      <Unique>1</Unique>
+    </index>
+    <key id="86" parent="13">
+      <ColNames>tno</ColNames>
+      <Primary>1</Primary>
+      <UnderlyingIndexName>sqlite_autoindex_tickets_1</UnderlyingIndexName>
+    </key>
+    <foreign-key id="87" parent="13">
+      <ColNames>regno</ColNames>
+      <RefTableName>registrations</RefTableName>
+      <RefColNames>regno</RefColNames>
+    </foreign-key>
+    <column id="88" parent="14" name="uid">
+      <Position>1</Position>
+      <DataType>char(8)|0s</DataType>
+    </column>
+    <column id="89" parent="14" name="pwd">
+      <Position>2</Position>
+      <DataType>char(8)|0s</DataType>
+    </column>
+    <column id="90" parent="14" name="utype">
+      <Position>3</Position>
+      <DataType>char(1)|0s</DataType>
+    </column>
+    <column id="91" parent="14" name="fname">
+      <Position>4</Position>
+      <DataType>char(12)|0s</DataType>
+    </column>
+    <column id="92" parent="14" name="lname">
+      <Position>5</Position>
+      <DataType>char(12)|0s</DataType>
+    </column>
+    <column id="93" parent="14" name="city">
+      <Position>6</Position>
+      <DataType>char(15)|0s</DataType>
+    </column>
+    <index id="94" parent="14" name="sqlite_autoindex_users_1">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>uid</ColNames>
+      <ColumnCollations></ColumnCollations>
+      <Unique>1</Unique>
+    </index>
+    <key id="95" parent="14">
+      <ColNames>uid</ColNames>
+      <Primary>1</Primary>
+      <UnderlyingIndexName>sqlite_autoindex_users_1</UnderlyingIndexName>
+    </key>
+    <foreign-key id="96" parent="14">
+      <ColNames>fname
+lname</ColNames>
+      <RefTableName>persons</RefTableName>
+      <RefColNames>fname
+lname</RefColNames>
+    </foreign-key>
+    <column id="97" parent="15" name="vin">
+      <Position>1</Position>
+      <DataType>char(5)|0s</DataType>
+    </column>
+    <column id="98" parent="15" name="make">
+      <Position>2</Position>
+      <DataType>char(10)|0s</DataType>
+    </column>
+    <column id="99" parent="15" name="model">
+      <Position>3</Position>
+      <DataType>char(10)|0s</DataType>
+    </column>
+    <column id="100" parent="15" name="year">
+      <Position>4</Position>
+      <DataType>int|0s</DataType>
+    </column>
+    <column id="101" parent="15" name="color">
+      <Position>5</Position>
+      <DataType>char(10)|0s</DataType>
+    </column>
+    <index id="102" parent="15" name="sqlite_autoindex_vehicles_1">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>vin</ColNames>
+      <ColumnCollations></ColumnCollations>
+      <Unique>1</Unique>
+    </index>
+    <key id="103" parent="15">
+      <ColNames>vin</ColNames>
+      <Primary>1</Primary>
+      <UnderlyingIndexName>sqlite_autoindex_vehicles_1</UnderlyingIndexName>
+    </key>
+  </database-model>
+</dataSource>

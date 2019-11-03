@@ -4,6 +4,7 @@ import datetime
 from getpass import getpass
 from random import seed
 from random import randint
+
 # seed random number generator
 seed(1)
 
@@ -24,11 +25,13 @@ HELP_COMMANDS = {
 
 dt = datetime.datetime
 
+
 # TODO: Refactor this to handle the cursor instead of the main class
 class DBCalls():
     def __init__(self, db_name):
         self.conn = sqlite3.connect(db_name)
         self.c = self.conn.cursor()
+
 
 class Sanitizer():
     def sanitizeInput(self, *args):
@@ -37,6 +40,7 @@ class Sanitizer():
         """
         # TODO
         return args
+
 
 class Main():
     def __init__(self, db_name):
@@ -75,7 +79,7 @@ class Main():
                     self.functions[cmd]()
             except Exception as e:
                 print(str(e))
-    
+
     def help(self):
         """
         Print a list of commands for the avaliable user
@@ -83,7 +87,6 @@ class Main():
         for cmd in HELP_COMMANDS:
             if cmd in self.functions:
                 print("{} -> {}".format(cmd, HELP_COMMANDS[cmd]))
-
 
     def login(self, uid, pwd):
         """
@@ -102,7 +105,7 @@ class Main():
             self.userRole = user[2]
 
             # build set of avaible functions based on user roles
-            self.functions = { x: getattr(self, x[1:]) for x in ROLES[self.userRole]}
+            self.functions = {x: getattr(self, x[1:]) for x in ROLES[self.userRole]}
 
         else:
             raise Exception("Invalid user id or password!")
@@ -124,14 +127,14 @@ class Main():
             gender = args[3]
             bdate = args[4]
             bplace = args[5]
-            mFname = args[6] 
+            mFname = args[6]
             mLname = args[7]
             fFname = args[8]
             fLname = args[9]
 
-            regno = randint(0,999999)
+            regno = randint(0, 999999)
             regdate = str(dt.now())
-            regplace = self.user[5] # TODO: Make a user class so we dont have to directly access a tuple
+            regplace = self.user[5]  # TODO: Make a user class so we dont have to directly access a tuple
             mother = self.getPerson(mFname, mLname)
             father = self.getPerson(fFname, fLname)
             if not mother:
@@ -160,7 +163,7 @@ class Main():
                     INSERT INTO births (regno, fname, lname, regdate, regplace, gender, f_fname, f_lname, m_fname, m_lname)
                     VALUES (?,?,?,?,?,?,?,?,?,?)
                     """,
-                    (   
+                    (
                         regno,
                         fname,
                         lname,
@@ -180,7 +183,7 @@ class Main():
             p1Lname = args[2]
             p2Fname = args[3]
             p2Lname = args[4]
-            regno = randint(0,999999)
+            regno = randint(0, 999999)
             regdate = dt.now()
             regplace = self.user[5]
             p1 = self.getPerson(p1Fname, p1Lname)
@@ -200,7 +203,7 @@ class Main():
                 INSERT INTO marriages (regno, regdate, regplace, p1_fname, p1_lname, p2_fname, p2_lname) 
                 VALUES (?,?,?,?,?,?,?)
                 """,
-                (   
+                (
                     regno,
                     regdate,
                     regplace,
@@ -214,7 +217,7 @@ class Main():
             self.conn.commit()
         else:
             raise Exception("Missing Argument(s)")
-    
+
     def renew(self, args):
         """
         Renew an object
@@ -228,7 +231,7 @@ class Main():
             )
             registration = self.c.fetchone()
             if registration:
-                currentExpiry = dt.strptime(registration[2], "%Y-%m-%d") # TODO: Parse Correctly
+                currentExpiry = dt.strptime(registration[2], "%Y-%m-%d")  # TODO: Parse Correctly
                 newExpiry = currentExpiry + datetime.timedelta(days=(365))
 
                 if currentExpiry <= dt.now():
@@ -266,9 +269,9 @@ class Main():
             )
             if not self.c.fetchone():
                 raise Exception("Transaction cannot be processed. Current owner does not match registered.")
-            
+
             # set the registration and expiry date of the registration
-            regno = randint(0,999999)
+            regno = randint(0, 999999)
             regdate = dt.now()
             expiry = dt.now() + datetime.timedelta(days=365)
 
@@ -325,12 +328,12 @@ class Main():
             VALUES (?,?,?,?,?,?)
             """,
             (fname,
-                lname,
-                bdate,
-                bplace,
-                address,
-                phone
-            )
+             lname,
+             bdate,
+             bplace,
+             address,
+             phone
+             )
         )
 
 
@@ -339,7 +342,8 @@ if __name__ == "__main__":
     m.setup()
     s = Sanitizer()
     while True:
-        if m.quitProgram : break
+        if m.quitProgram:
+            break
         elif not m.user:
             user_name = input("Enter your id: ")
             user_pass = getpass("Enter your password: ")
