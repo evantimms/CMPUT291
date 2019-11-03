@@ -353,10 +353,50 @@ class Main():
         """
 
     def issue(self, args):
-        """
-        Issue a ticket
-        # TODO: Implement
-        """
+        # Issue a ticket
+        rno = args[1]
+        fname = args[2]
+        lname = args[3]
+        make = args[4]
+        model = args[5]
+        year = args[6]
+        color = args[7]
+        tno = args[8]
+        vdate = args[9]
+        violation = args[10]
+        fine = args[11]
+
+        self.c.execute(
+            "SELECT * FROM registrations WHERE rno = ?",
+            (rno)
+        )
+        registration = self.c.fetchone()
+        if registration:
+            fname = registration[5]
+            lname = registration[6]
+
+        vehicle = self.c.execute(
+            """" "SELECT * FROM vehicles v, registrations r WHERE r.vin = v.vin
+                AND r.rno = ? """,
+                (rno)
+        )
+        if vehicle:
+            make = vehicle[1]
+            model = vehicle[2]
+            year = vehicle[3]
+            color = vehicle[4]
+        
+        # complete the query
+
+
+            # self.c.execute(
+            #     "UPDATE registrations SET expiry = ? WHERE regno = ?",
+            #     (newExpiry, regno)
+            # )
+            # self.conn.commit()
+        else:
+            raise Exception("Missing Argument(s)")
+ 
 
     def findOwner(self, args):
         """Find car owner along with vehicle and registration details
