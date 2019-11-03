@@ -347,13 +347,48 @@ class Main():
             raise Exception("Missing Argument(s)")
 
     def getAbstract(self, args):
-        """
-        Return a drivers abstract
-        # TODO: Implement
-        """
+        # get the person's name from the user
+        fname = input("Enter first name of the person: ")
+        lname = input("Enter last name of the person: ")
+
+        # Ensure the person belongs to database
+        person = self.c.execute(
+            """
+            SELECT regno FROM births b1, births b2 WHERE b1.regno = b2.regno
+            AND b1.fname = ? and b2.lname = ?
+            """,
+            (fname, lname)
+        )
+        if person == None:
+            print("Invalid person entry")
+        
+        # get driver's abstract
+        # ToDo: finish the query
+
+        # sort tickets
+        count = 0
+        loops = 0
+        # get ticket count
+    #    todo cursor.execute("SELECT * from tickets where (# enter conditions))
+		ticket_set = cursor.fetchall()
+
+        # Show 5 tickets if more than 5 and allow user to see more
+        if count == 5 or ticket == ticket_set[len(ticket_set) - 1]:
+            choice = input("Select one of these tickets? (Enter option # or press enter to see more)")
+            if choice == '':
+                count = -1
+                loops +=1
+            else:
+                try:
+                    choice = int(choice)
+                    return ticket_set[(loops * 4) + (choice - 1)][0]
+                except ValueError:
+                    print("Invalid option. Please retry.")
+                    # return 
+        count += 1
+
 
     def issue(self, args):
-        # Issue a ticket
         rno = args[1]
         fname = args[2]
         lname = args[3]
@@ -361,11 +396,13 @@ class Main():
         model = args[5]
         year = args[6]
         color = args[7]
-        tno = args[8]
-        vdate = args[9]
-        violation = args[10]
-        fine = args[11]
+        violation = args[8]
+        fine = args[9]
+        vdate = str(dt.now())
+        tno = randint(0,999999)
 
+        # get registration number, fname and lname
+        rno = ("Please enter a registration number to issue ticket: ")
         self.c.execute(
             "SELECT * FROM registrations WHERE rno = ?",
             (rno)
@@ -375,8 +412,9 @@ class Main():
             fname = registration[5]
             lname = registration[6]
 
+        # Get vehicle details
         vehicle = self.c.execute(
-            """" "SELECT * FROM vehicles v, registrations r WHERE r.vin = v.vin
+            """" "SELECT * FROM vehicles v, registration r WHERE r.vin = v.vin
                 AND r.rno = ? """,
                 (rno)
         )
@@ -385,17 +423,27 @@ class Main():
             model = vehicle[2]
             year = vehicle[3]
             color = vehicle[4]
-        
-        # complete the query
 
-
-            # self.c.execute(
-            #     "UPDATE registrations SET expiry = ? WHERE regno = ?",
-            #     (newExpiry, regno)
-            # )
-            # self.conn.commit()
-        else:
-            raise Exception("Missing Argument(s)")
+        # Issue a ticket
+        violation = input("Pleaser enter the violation description.")
+        fine = input("Please enter the fine amount")
+        try:
+            if fine > 0:
+                self.c.execute(
+                    """
+                    INSERT INTO tickets (tno,regno,fine,violation,vdate) 
+                    VALUES (?,?,?,?,?)
+                    """,
+                    (tno,
+                    rno,
+                    fine,
+                    violation,
+                    vdate
+                    )
+                )
+                print("The ticket is issued")
+        except Exception as e:
+            print("Invalid fine amount")
  
 
     def findOwner(self, args):
@@ -426,6 +474,14 @@ class Main():
         # TODO: Move to db class
         """
         bdate = input("Enter birthday: ")
+        # Possible Error checking?
+        try:
+            year, month, day = bdate.split('-')
+            datetime.datetime(int(year), int(month), int(day))
+            bdate = year + '-' + month + '-' + day
+        except ValueError:
+            print("Invalid Date")
+        
         bplace = input("Enter birth place: ")
         address = input("Enter adress: ")
         phone = input("Enter phone: ")
