@@ -2,6 +2,9 @@
 
 ## Group Members
 - Evan Timms (1504825)
+- Vanika Dhamija, ccid: vanika (1503248)
+
+We did not collaborate with anyone else
 
 ## TODO:
 - SQL Injection Prevention (Even tho I think I did this but worth it to sanitize the input)

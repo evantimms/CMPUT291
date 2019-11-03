@@ -9,7 +9,7 @@ seed(1)
 
 ROLES = {
     "a": [".quit", ".help", ".logout", ".register", ".renew", ".process", ".getAbstract"],
-    "o": [".quit", ".help", ".logout"]
+    "o": [".quit", ".help", ".logout", ".issue", ".findOwner"]
 }
 
 HELP_COMMANDS = {
@@ -152,7 +152,7 @@ class Main():
                     INSERT INTO persons (fname, lname, bdate, bplace, address, phone)
                     VALUES (?,?,?,?,?,?)
                     """,
-                    (fname, lname, bdate, bplace, None, None)
+                    (fname, lname, bdate, bplace, None, None) # enter Mom's phone and address
                 )
 
                 self.c.execute(
@@ -188,7 +188,7 @@ class Main():
             if not p1:
                 # get p1 from user
                 print("Cannot find partner 1")
-                self.getPerson(p1Fname, p2Lname)
+                self.getPerson(p1Fname, p1Lname)
             if not p2:
                 # get p2 from user
                 print("Cannot find partner 2")
@@ -266,8 +266,23 @@ class Main():
             )
             if not self.c.fetchone():
                 raise Exception("Transaction cannot be processed. Current owner does not match registered.")
-            
-            # set the registration and expiry date of the registration
+           
+            # set the expiry date of the current registration
+            regnoOld = self.c.execute(
+                """
+                SELECT regno FROM registrations r, vehicles v WHERE WHERE r.vin = v.vin
+                AND r.fname = ? and r.lname = ?
+                """,
+                (currentOwnerFname, currentOwnerLname)
+            )
+            newExpiry = dt.now()
+            self.c.execute(
+                "UPDATE registrations SET expiry = ? WHERE regno = ?",
+                (newExpiry, regnoOld)
+            )
+            self.conn.commit()
+
+            # set the registration and expiry date of the new registration
             regno = randint(0,999999)
             regdate = dt.now()
             expiry = dt.now() + datetime.timedelta(days=365)
@@ -289,6 +304,17 @@ class Main():
     def getAbstract(self, args):
         """
         Return a drivers abstract
+        # TODO: Implement
+        """
+
+    def issue(self, args):
+        """
+        Issue a ticket
+        # TODO: Implement
+        """
+
+    def findOwner(self, args):
+        """Find car owner along with vehicle and registration details
         # TODO: Implement
         """
 
@@ -325,14 +351,13 @@ class Main():
             VALUES (?,?,?,?,?,?)
             """,
             (fname,
-                lname,
-                bdate,
-                bplace,
-                address,
-                phone
+             lname,
+             bdate,
+             bplace,
+             address,
+             phone
             )
         )
-
 
 if __name__ == "__main__":
     m = Main("DB")
