@@ -9,7 +9,7 @@ seed(1)
 
 ROLES = {
     "a": [".quit", ".help", ".logout", ".register", ".renew", ".process", ".getAbstract"],
-    "o": [".quit", ".help", ".logout"]
+    "o": [".quit", ".help", ".logout", ".issue", ".findOwner"]
 }
 
 HELP_COMMANDS = {
@@ -147,12 +147,20 @@ class Main():
 
             # enter new person into births and persons
             if not self.getPerson(fname, lname):
+
+                # enter Mom's phone and address for the newborn
+                self.c.execute(
+                    "SELECT address, phone FROM persons WHERE fname = ? AND lname = ?",
+                    (mFname, mLname)
+                )
+                values = self.c.fetchone()
+
                 self.c.execute(
                     """
                     INSERT INTO persons (fname, lname, bdate, bplace, address, phone)
                     VALUES (?,?,?,?,?,?)
                     """,
-                    (fname, lname, bdate, bplace, None, None)
+                    (fname, lname, bdate, bplace, values[0], values[1]) 
                 )
 
                 self.c.execute(
@@ -188,7 +196,7 @@ class Main():
             if not p1:
                 # get p1 from user
                 print("Cannot find partner 1")
-                self.getPerson(p1Fname, p2Lname)
+                self.getPerson(p1Fname, p1Lname)
             if not p2:
                 # get p2 from user
                 print("Cannot find partner 2")
@@ -266,8 +274,23 @@ class Main():
             )
             if not self.c.fetchone():
                 raise Exception("Transaction cannot be processed. Current owner does not match registered.")
-            
-            # set the registration and expiry date of the registration
+           
+            # set the expiry date of the current registration
+            regnoOld = self.c.execute(
+                """
+                SELECT regno FROM registrations r, vehicles v WHERE WHERE r.vin = v.vin
+                AND r.fname = ? and r.lname = ?
+                """,
+                (currentOwnerFname, currentOwnerLname)
+            )
+            newExpiry = dt.now()
+            self.c.execute(
+                "UPDATE registrations SET expiry = ? WHERE regno = ?",
+                (newExpiry, regnoOld)
+            )
+            self.conn.commit()
+
+            # set the registration and expiry date of the new registration
             regno = randint(0,999999)
             regdate = dt.now()
             expiry = dt.now() + datetime.timedelta(days=365)
@@ -282,13 +305,149 @@ class Main():
             )
 
             self.conn.commit()
+        # Process a payment
+        elif args[0] == "-p":
+            tno = args[1]
+            amount = args[2]
+            fine = args[3]
+            pdate = dt.now()
+
+            # calculate the amount paid for a given ticket
+            amountPaid = self.c.execute(
+                            """
+                            SELECT SUM(amount) FROM payments p, tickets t WHERE p.tno = t.tno
+                            AND p.date < dt.now()
+                            """
+                        )
+
+            # accept payment if amountPaid + payment Amount <= fine, otherwise raise error
+            totalAmount = amountPaid + amount
+
+            if fine >= totalAmount:
+                # Update fine amount for the ticket
+                fineRemaining = fine - totalAmount
+                self.c.execute(
+                    "UPDATE tickets SET fine = ? WHERE tno = ?",
+                    (fineRemaining, tno)
+                )
+                self.conn.commit()
+
+                # Insert amount into payments table
+                self.c.execute(
+                    """
+                    INSERT INTO payments (tno, pdate, amount) 
+                    VALUES (?,?,?)
+                    """,
+                    (tno, pdate, amount)
+                )
+                self.conn.commit()
+            else:
+                raise Exception("Amount paid exceeds ticket fine")
         else:
-            # TODO: Process a payment
-            pass
+            raise Exception("Missing Argument(s)")
 
     def getAbstract(self, args):
-        """
-        Return a drivers abstract
+        # get the person's name from the user
+        fname = input("Enter first name of the person: ")
+        lname = input("Enter last name of the person: ")
+
+        # Ensure the person belongs to database
+        person = self.c.execute(
+            """
+            SELECT regno FROM births b1, births b2 WHERE b1.regno = b2.regno
+            AND b1.fname = ? and b2.lname = ?
+            """,
+            (fname, lname)
+        )
+        if person == None:
+            print("Invalid person entry")
+        
+        # get driver's abstract
+        # ToDo: finish the query
+
+        # sort tickets
+        count = 0
+        loops = 0
+        # get ticket count
+    #    todo cursor.execute("SELECT * from tickets where (# enter conditions))
+		ticket_set = cursor.fetchall()
+
+        # Show 5 tickets if more than 5 and allow user to see more
+        if count == 5 or ticket == ticket_set[len(ticket_set) - 1]:
+            choice = input("Select one of these tickets? (Enter option # or press enter to see more)")
+            if choice == '':
+                count = -1
+                loops +=1
+            else:
+                try:
+                    choice = int(choice)
+                    return ticket_set[(loops * 4) + (choice - 1)][0]
+                except ValueError:
+                    print("Invalid option. Please retry.")
+                    # return 
+        count += 1
+
+
+    def issue(self, args):
+        rno = args[1]
+        fname = args[2]
+        lname = args[3]
+        make = args[4]
+        model = args[5]
+        year = args[6]
+        color = args[7]
+        violation = args[8]
+        fine = args[9]
+        vdate = str(dt.now())
+        tno = randint(0,999999)
+
+        # get registration number, fname and lname
+        rno = ("Please enter a registration number to issue ticket: ")
+        self.c.execute(
+            "SELECT * FROM registrations WHERE rno = ?",
+            (rno)
+        )
+        registration = self.c.fetchone()
+        if registration:
+            fname = registration[5]
+            lname = registration[6]
+
+        # Get vehicle details
+        vehicle = self.c.execute(
+            """" "SELECT * FROM vehicles v, registration r WHERE r.vin = v.vin
+                AND r.rno = ? """,
+                (rno)
+        )
+        if vehicle:
+            make = vehicle[1]
+            model = vehicle[2]
+            year = vehicle[3]
+            color = vehicle[4]
+
+        # Issue a ticket
+        violation = input("Pleaser enter the violation description.")
+        fine = input("Please enter the fine amount")
+        try:
+            if fine > 0:
+                self.c.execute(
+                    """
+                    INSERT INTO tickets (tno,regno,fine,violation,vdate) 
+                    VALUES (?,?,?,?,?)
+                    """,
+                    (tno,
+                    rno,
+                    fine,
+                    violation,
+                    vdate
+                    )
+                )
+                print("The ticket is issued")
+        except Exception as e:
+            print("Invalid fine amount")
+ 
+
+    def findOwner(self, args):
+        """Find car owner along with vehicle and registration details
         # TODO: Implement
         """
 
@@ -315,6 +474,14 @@ class Main():
         # TODO: Move to DBApi class
         """
         bdate = input("Enter birthday: ")
+        # Possible Error checking?
+        try:
+            year, month, day = bdate.split('-')
+            datetime.datetime(int(year), int(month), int(day))
+            bdate = year + '-' + month + '-' + day
+        except ValueError:
+            print("Invalid Date")
+        
         bplace = input("Enter birth place: ")
         address = input("Enter adress: ")
         phone = input("Enter phone: ")
@@ -325,14 +492,13 @@ class Main():
             VALUES (?,?,?,?,?,?)
             """,
             (fname,
-                lname,
-                bdate,
-                bplace,
-                address,
-                phone
+             lname,
+             bdate,
+             bplace,
+             address,
+             phone
             )
         )
-
 
 if __name__ == "__main__":
     m = Main("DB")
