@@ -1,7 +1,9 @@
 insert into persons values ("Evan", "Timms", "01-02-1998", "Edmonton", "10531 90st SW", "4039936409");
+insert into persons values ("Officer", "Jordan", "01-02-1988", "Calgary", "10531 90st SW", "4031234567");
 insert into persons values ("Sally", "Timms", "01-02-1998", "Calgary", "9th St SW", "5871238121");
 
 insert into users values ("1504825", "helloworld", "a", "Evan", "Timms", "Edmonton");
+insert into users values ("1234567", "helloworld", "o", "Officer", "Jordan", "Edmonton");
 
 insert into vehicles values ("CD43H", "Mazda", "6", 2004, "Red");
 insert into vehicles values ("6DGB1", "Porsche", "911", 2015, "Yellow");
