@@ -1,3 +1,4 @@
+# TODO:
 import sqlite3
 import math
 import datetime
@@ -5,17 +6,22 @@ from getpass import getpass
 from random import seed
 from random import randint
 
+# TODO: can we improve random?
+
 # seed random number generator
+# Makes all random calls the same
 seed(1)
 
+# TODO: Fix roles
 ROLES = {
-    "a": [".quit", ".help", ".logout", ".register", ".renew", ".process", ".getAbstract"],
+    "a": [".quit", ".help", ".logout", ".register", ".renew", ".process", ".getAbstract", ".issue_ticket", ".find_owner"],
     "o": [".quit", ".help", ".logout"]
 }
 
 HELP_COMMANDS = {
     ".logout": "Log current user out",
-    ".register": "Register a marriage or a birth [ -b fname lname [m | f] birthdate birthplace m_fname m_lname f_fname f_lname] | -m p1fname p1lname p2fname p2lname ]",
+    ".register": "Register a marriage or a birth [ -b fname lname [m | f] birthdate birthplace m_fname m_lname "
+                 "f_fname f_lname] | -m p1fname p1lname p2fname p2lname ]",
     ".renew": "Renew a vechicle registration [ regno ]",
     ".process": "Process a bile of sale or a payment [ -s vin cFname, cLname, nFname, nLname, plate# | -p tck# amount]",
     ".getAbstract": "Get a drivers abstract",
@@ -34,7 +40,7 @@ class DBCalls():
 
 
 class Sanitizer():
-    def sanitizeInput(self, *args):
+    def sanitize_input(self, *args):
         """ 
         Sanitize a user input to prevent SQL Injection
         """
@@ -42,7 +48,7 @@ class Sanitizer():
         return args
 
 
-class Main():
+class Main:
     def __init__(self, db_name):
         self.conn = sqlite3.connect(db_name)
         self.c = self.conn.cursor()
@@ -160,7 +166,8 @@ class Main():
 
                 self.c.execute(
                     """
-                    INSERT INTO births (regno, fname, lname, regdate, regplace, gender, f_fname, f_lname, m_fname, m_lname)
+                    INSERT INTO births (regno, fname, lname, regdate, regplace, gender, f_fname, f_lname, m_fname, 
+                        m_lname)
                     VALUES (?,?,?,?,?,?,?,?,?,?)
                     """,
                     (
@@ -336,6 +343,61 @@ class Main():
              )
         )
 
+    def issue_ticket(self, args):
+        # Todo: Return make, model, year, color of registered car
+        # Provide val date, val text, fine amount
+        # Assignment unique ticket number (automatically) and record ticket
+        # Optional date defaults to today
+        reg_no = args[0]
+        self.c.execute(
+            """
+            SELECT v.make, v.model, v.year, v.color
+            FROM registrations JOIN vehicles v on registrations.vin = (?)
+            """,
+            reg_no
+        )
+        ticket_no = randint(0, 999999)
+        print(ticket_no)
+        ticket_text = input("Enter violation: ")
+        ticket_amount = input("Enter fine amount: ")
+        ticket_date = input("Enter date(default to today: ")
+        ticket_date = datetime.date.today() if ticket_date == "" else ticket_date
+
+        self.c.execute(
+            """
+            INSERT INTO tickets (fine, violation, regno, vdate, tno) 
+            VALUES (?,?,?,?,?)
+            """,
+            (ticket_amount, ticket_text, int(reg_no), ticket_date, ticket_no)
+        )
+        self.conn.commit()
+
+    def find_owner(self, args):
+        # ARGS: {make, model, year, color, plate}
+        # Return all matches
+        # if |m| > 4: make, model, year, color and let user select
+        # if |m| < 4 OR from above show:
+        #   make, model, year, color, plate, latest reg date, expiry date, latest name
+        # TODO: What if reg empty?
+        make = if args[0]
+        model =
+        year =
+        color =
+        plate =
+        self.c.execute(
+            """
+            SELECT *
+            FROM registrations JOIN vehicles v on registrations.vin = v.vin
+            WHERE
+                make = ? OR
+                model = ? OR
+                year = ? OR
+                color = ? OR
+                plate = ?
+            """,
+            (make, model, year, color, plate))
+        print(self.c.fetchall())
+
 
 if __name__ == "__main__":
     m = Main("DB")
@@ -347,7 +409,7 @@ if __name__ == "__main__":
         elif not m.user:
             user_name = input("Enter your id: ")
             user_pass = getpass("Enter your password: ")
-            s.sanitizeInput(user_name, user_pass)
+            s.sanitize_input(user_name, user_pass)
             try:
                 m.login(user_name, user_pass)
             except Exception as e:
@@ -355,4 +417,4 @@ if __name__ == "__main__":
         else:
             user_in = input("Enter a command: ")
             m.execute(user_in)
-            s.sanitizeInput(user_in)
+            s.sanitize_input(user_in)

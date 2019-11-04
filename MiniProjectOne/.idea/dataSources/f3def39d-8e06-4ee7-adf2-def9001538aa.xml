@@ -65,7 +65,6 @@
     <index id="26" parent="6" name="sqlite_autoindex_births_1">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>regno</ColNames>
-      <ColumnCollations></ColumnCollations>
       <Unique>1</Unique>
     </index>
     <key id="27" parent="6">
@@ -119,7 +118,6 @@ lname</RefColNames>
       <ColNames>ddate
 fname
 lname</ColNames>
-      <ColumnCollations></ColumnCollations>
       <Unique>1</Unique>
     </index>
     <key id="37" parent="7">
@@ -167,7 +165,6 @@ lname</RefColNames>
     <index id="46" parent="8" name="sqlite_autoindex_marriages_1">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>regno</ColNames>
-      <ColumnCollations></ColumnCollations>
       <Unique>1</Unique>
     </index>
     <key id="47" parent="8">
@@ -205,7 +202,6 @@ lname</RefColNames>
       <NameSurrogate>1</NameSurrogate>
       <ColNames>tno
 pdate</ColNames>
-      <ColumnCollations></ColumnCollations>
       <Unique>1</Unique>
     </index>
     <key id="54" parent="9">
@@ -247,7 +243,6 @@ pdate</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ColNames>fname
 lname</ColNames>
-      <ColumnCollations></ColumnCollations>
       <Unique>1</Unique>
     </index>
     <key id="63" parent="10">
@@ -287,7 +282,6 @@ lname</ColNames>
     <index id="71" parent="11" name="sqlite_autoindex_registrations_1">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>regno</ColNames>
-      <ColumnCollations></ColumnCollations>
       <Unique>1</Unique>
     </index>
     <key id="72" parent="11">
@@ -350,7 +344,6 @@ lname</RefColNames>
     <index id="85" parent="13" name="sqlite_autoindex_tickets_1">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>tno</ColNames>
-      <ColumnCollations></ColumnCollations>
       <Unique>1</Unique>
     </index>
     <key id="86" parent="13">
@@ -390,7 +383,6 @@ lname</RefColNames>
     <index id="94" parent="14" name="sqlite_autoindex_users_1">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>uid</ColNames>
-      <ColumnCollations></ColumnCollations>
       <Unique>1</Unique>
     </index>
     <key id="95" parent="14">
@@ -428,7 +420,6 @@ lname</RefColNames>
     <index id="102" parent="15" name="sqlite_autoindex_vehicles_1">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>vin</ColNames>
-      <ColumnCollations></ColumnCollations>
       <Unique>1</Unique>
     </index>
     <key id="103" parent="15">
