@@ -14,8 +14,8 @@ seed(1)
 
 # TODO: Fix roles
 ROLES = {
-    "a": [".quit", ".help", ".logout", ".register", ".renew", ".process", ".getAbstract", ".issue_ticket", ".find_owner"],
-    "o": [".quit", ".help", ".logout"]
+    "a": [".quit", ".help", ".logout", ".register", ".renew", ".process", ".getAbstract", ".find_owner"],
+    "o": [".quit", ".help", ".logout", ".issue_ticket"]
 }
 
 HELP_COMMANDS = {
@@ -379,11 +379,27 @@ class Main:
         # if |m| < 4 OR from above show:
         #   make, model, year, color, plate, latest reg date, expiry date, latest name
         # TODO: What if reg empty?
-        make = if args[0]
-        model =
-        year =
-        color =
-        plate =
+        make, model, year, color, plate = "", "", "", "", ""
+        try:
+            make = args[1]
+        except IndexError:
+            make = ""
+        try:
+            model = args[2]
+        except IndexError:
+            model = ""
+        try:
+            year = args[3]
+        except IndexError:
+            year = ""
+        try:
+            color = args[4]
+        except IndexError:
+            color = ""
+        try:
+            plate = args[5]
+        except IndexError:
+            plate = ""
         self.c.execute(
             """
             SELECT *
