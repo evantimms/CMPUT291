@@ -5,8 +5,7 @@ import datetime
 from getpass import getpass
 from random import seed
 from random import randint
-
-# TODO: can we improve random?
+from DBApi import DBApi
 
 # seed random number generator
 # Makes all random calls the same
@@ -14,8 +13,8 @@ seed(1)
 
 # TODO: Fix roles
 ROLES = {
-    "a": [".quit", ".help", ".logout", ".register", ".renew", ".process", ".getAbstract", ".find_owner"],
-    "o": [".quit", ".help", ".logout", ".issue_ticket"]
+    "a": [".quit", ".help", ".logout", ".register", ".renew", ".process", ".getAbstract"],
+    "o": [".quit", ".help", ".logout", ".issue", ".findOwner"]
 }
 
 HELP_COMMANDS = {
@@ -32,39 +31,19 @@ HELP_COMMANDS = {
 dt = datetime.datetime
 
 
-# TODO: Refactor this to handle the cursor instead of the main class
-class DBCalls():
+class Main():
     def __init__(self, db_name):
-        self.conn = sqlite3.connect(db_name)
-        self.c = self.conn.cursor()
-
-
-class Sanitizer():
-    def sanitize_input(self, *args):
-        """ 
-        Sanitize a user input to prevent SQL Injection
-        """
-        # TODO
-        return args
-
-
-class Main:
-    def __init__(self, db_name):
-        self.conn = sqlite3.connect(db_name)
-        self.c = self.conn.cursor()
         self.user = None
         self.userRole = None
         self.functions = None
         self.quitProgram = False
+        self.api = DBApi(db_name)
 
     def setup(self):
         """
         Load and intialize data and databases
         """
-        f = open("CreateTables.sql", "r").read()
-        self.c.executescript(f)
-        f = open("AddBasicData.sql", "r").read()
-        self.c.executescript(f)
+        self.api.loadData()
 
     def execute(self, userIn):
         """
@@ -98,11 +77,7 @@ class Main:
         """
         Log in a user
         """
-        self.c.execute(
-            "SELECT * FROM users WHERE uid = ? AND pwd = ?",
-            (uid, pwd)
-        )
-        user = self.c.fetchone()
+        user = self.api.getUser(uid, pwd)
         if user:
             print("Logging in...")
 
@@ -141,30 +116,36 @@ class Main:
             regno = randint(0, 999999)
             regdate = str(dt.now())
             regplace = self.user[5]  # TODO: Make a user class so we dont have to directly access a tuple
-            mother = self.getPerson(mFname, mLname)
-            father = self.getPerson(fFname, fLname)
+            mother = self.api.getPerson(mFname, mLname)
+            father = self.api.getPerson(fFname, fLname)
             if not mother:
                 # get information about the mother from the user
                 print("No entry for mother. Please enter the following information")
                 # enter into persons db
-                self.createPerson(mFname, mLname)
+                self.api.createPerson(mFname, mLname)
             if not father:
                 # get information about the mother from the user
                 print("No entry for father. Please enter the following information")
                 # enter into persons db
-                self.createPerson(fFname, fLname)
+                self.api.createPerson(fFname, fLname)
 
             # enter new person into births and persons
-            if not self.getPerson(fname, lname):
-                self.c.execute(
+            if not self.api.getPerson(fname, lname):
+                # enter Mom's phone and address for the newborn
+                values = self.api.executeQuery(
+                    "SELECT address, phone FROM persons WHERE fname = ? AND lname = ?",
+                    (mFname, mLname)
+                )
+
+                self.api.executeQuery(
                     """
                     INSERT INTO persons (fname, lname, bdate, bplace, address, phone)
                     VALUES (?,?,?,?,?,?)
                     """,
-                    (fname, lname, bdate, bplace, None, None)
+                    (fname, lname, bdate, bplace, values[0], values[1])
                 )
 
-                self.c.execute(
+                self.api.executeQuery(
                     """
                     INSERT INTO births (regno, fname, lname, regdate, regplace, gender, f_fname, f_lname, m_fname, 
                         m_lname)
@@ -183,7 +164,7 @@ class Main:
                         mLname
                     )
                 )
-                self.conn.commit()
+                print("added new birth to database")
 
         elif args[0] == "-m" and len(args) == 5:
             p1Fname = args[1]
@@ -193,25 +174,24 @@ class Main:
             regno = randint(0, 999999)
             regdate = dt.now()
             regplace = self.user[5]
-            p1 = self.getPerson(p1Fname, p1Lname)
-            p2 = self.getPerson(p2Fname, p2Lname)
+            p1 = self.api.getPerson(p1Fname, p1Lname)
+            p2 = self.api.getPerson(p2Fname, p2Lname)
             if not p1:
                 # get p1 from user
                 print("Cannot find partner 1")
-                self.getPerson(p1Fname, p2Lname)
+                self.api.getPerson(p1Fname, p1Lname)
             if not p2:
                 # get p2 from user
                 print("Cannot find partner 2")
-                self.getPerson(p2Fname, p2Lname)
+                self.api.getPerson(p2Fname, p2Lname)
 
             # enter marriage
-            self.c.execute(
+            self.api.executeQuery(
                 """
-                INSERT INTO marriages (regno, regdate, regplace, p1_fname, p1_lname, p2_fname, p2_lname) 
-                VALUES (?,?,?,?,?,?,?)
+                INSERT INTO marriages (regdate, regplace, p1_fname, p1_lname, p2_fname, p2_lname) 
+                VALUES (?,?,?,?,?,?)
                 """,
                 (
-                    regno,
                     regdate,
                     regplace,
                     p1Fname,
@@ -220,8 +200,7 @@ class Main:
                     p2Lname
                 )
             )
-
-            self.conn.commit()
+            print("added new marriage to database")
         else:
             raise Exception("Missing Argument(s)")
 
@@ -232,11 +211,10 @@ class Main:
         if len(args) == 1:
             regno = args[0]
             # get the registration from the db
-            self.c.execute(
+            registration = self.api.executeQuery(
                 "SELECT * FROM registrations WHERE regno = ?",
                 (regno,)
             )
-            registration = self.c.fetchone()
             if registration:
                 currentExpiry = dt.strptime(registration[2], "%Y-%m-%d")  # TODO: Parse Correctly
                 newExpiry = currentExpiry + datetime.timedelta(days=(365))
@@ -244,11 +222,12 @@ class Main:
                 if currentExpiry <= dt.now():
                     newExpiry = dt.now() + datetime.timedelta(days=(365))
 
-                self.c.execute(
+                self.api.executeQuery(
                     "UPDATE registrations SET expiry = ? WHERE regno = ?",
-                    (newExpiry, regno)
+                    (newExpiry, regno),
+                    True
                 )
-                self.conn.commit()
+                print("updated registration")
         else:
             raise Exception("Missing Argument(s)")
 
@@ -266,7 +245,7 @@ class Main:
             plate = args[6]
 
             # check if current owner matches most recent owner of the car
-            self.c.execute(
+            prevRegistraion = self.api.executeQuery(
                 """
                 SELECT * FROM vehicles v, registrations r WHERE r.vin = v.vin
                 AND v.vin = ? AND r.fname = ? and r.lname = ?
@@ -274,31 +253,126 @@ class Main:
                 """,
                 (vin, currentOwnerFname, currentOwnerLname, dt.now())
             )
-            if not self.c.fetchone():
+            if not prevRegistraion:
                 raise Exception("Transaction cannot be processed. Current owner does not match registered.")
 
-            # set the registration and expiry date of the registration
+            # set the expiry date of the current registration
+            regnoOld = self.api.executeQuery(
+                """
+                SELECT regno FROM registrations r, vehicles v WHERE WHERE r.vin = v.vin
+                AND r.fname = ? and r.lname = ?
+                """,
+                (currentOwnerFname, currentOwnerLname)
+            )
+            newExpiry = dt.now()
+            self.api.executeQuery(
+                "UPDATE registrations SET expiry = ? WHERE regno = ?",
+                (newExpiry, regnoOld),
+                True
+            )
+
+            # set the registration and expiry date of the new registration
             regno = randint(0, 999999)
             regdate = dt.now()
             expiry = dt.now() + datetime.timedelta(days=365)
 
             # create new registration in the db
-            self.c.execute(
+            self.api.executeQuery(
                 """
                 INSERT INTO registrations (regno, regdate, expiry, plate, vin, fname, lname) 
                 VALUES (?,?,?,?,?,?,?)
                 """,
-                (regno, regdate, expiry, plate, vin, newOwnerFname, newOwnerLname)
+                (regno, regdate, expiry, plate, vin, newOwnerFname, newOwnerLname),
+                True
+            )
+            print("completed processing bill of sale")
+
+        # Process a payment
+        elif args[0] == "-p":
+            tno = args[1]
+            amount = args[2]
+            fine = args[3]
+            pdate = dt.now()
+
+            # calculate the amount paid for a given ticket
+            amountPaid = self.api.executeQuery(
+                """
+                            SELECT SUM(amount) FROM payments p, tickets t WHERE p.tno = t.tno
+                            AND p.date < dt.now()
+                            """
             )
 
-            self.conn.commit()
+            # accept payment if amountPaid + payment Amount <= fine, otherwise raise error
+            totalAmount = amountPaid + amount
+
+            if fine >= totalAmount:
+                # Update fine amount for the ticket
+                fineRemaining = fine - totalAmount
+                self.api.executeQuery(
+                    "UPDATE tickets SET fine = ? WHERE tno = ?",
+                    (fineRemaining, tno),
+                    True
+                )
+
+                # Insert amount into payments table
+                self.api.executeQuery(
+                    """
+                    INSERT INTO payments (tno, pdate, amount) 
+                    VALUES (?,?,?)
+                    """,
+                    (tno, pdate, amount),
+                    True
+                )
+            else:
+                raise Exception("Amount paid exceeds ticket fine")
         else:
-            # TODO: Process a payment
-            pass
+            raise Exception("Missing Argument(s)")
 
     def getAbstract(self, args):
-        """
-        Return a drivers abstract
+        # get the person's name from the user
+        fname = input("Enter first name of the person: ")
+        lname = input("Enter last name of the person: ")
+
+        # Ensure the person belongs to database
+        person = self.api.executeQuery(
+            """
+            SELECT regno FROM births b1, births b2 WHERE b1.regno = b2.regno
+            AND b1.fname = ? and b2.lname = ?
+            """,
+            (fname, lname)
+        )
+        if person == None:
+            print("Invalid person entry")
+
+        # get driver's abstract
+        # ToDo: finish the query
+
+        # sort tickets
+        count = 0
+        loops = 0
+        # get ticket count
+
+    #    todo cursor.execute("SELECT * from tickets where (# enter conditions))
+    # ticket_set = self.c.fetchall()
+
+    # Show 5 tickets if more than 5 and allow user to see more
+    # if count == 5 or ticket == ticket_set[len(ticket_set) - 1]:
+    #     choice = input("Select one of these tickets? (Enter option # or press enter to see more)")
+    #     if choice == '':
+    #         count = -1
+    #         loops +=1
+    #     else:
+    #         try:
+    #             choice = int(choice)
+    #             return ticket_set[(loops * 4) + (choice - 1)][0]
+    #         except ValueError:
+    #             print("Invalid option. Please retry.")
+    #             # return
+    # count += 1
+
+
+    def findOwner(self, args):
+        """Find car owner along with vehicle and registration details
         # TODO: Implement
         """
 
@@ -308,69 +382,39 @@ class Main:
         """
         self.quitProgram = True
 
-    def getPerson(self, fname, lname):
-        """
-        Get a person from the data base
-        # TODO: Move to db class
-        """
-        self.c.execute(
-            "SELECT * FROM persons WHERE fname = ? AND lname = ?",
-            (fname, lname)
-        )
-        return self.c.fetchone()
-
-    def createPerson(self, fname, lname):
-        """
-        Create a new person in the persons table
-        # TODO: Move to db class
-        """
-        bdate = input("Enter birthday: ")
-        bplace = input("Enter birth place: ")
-        address = input("Enter adress: ")
-        phone = input("Enter phone: ")
-
-        self.c.execute(
-            """
-            INSERT INTO persons (fname,lname,bdate,bplace,address,phone) 
-            VALUES (?,?,?,?,?,?)
-            """,
-            (fname,
-             lname,
-             bdate,
-             bplace,
-             address,
-             phone
-             )
-        )
-
-    def issue_ticket(self, args):
-        # Todo: Return make, model, year, color of registered car
+    def issue(self, args):
         # Provide val date, val text, fine amount
         # Assignment unique ticket number (automatically) and record ticket
         # Optional date defaults to today
         reg_no = args[0]
-        self.c.execute(
+        registered = self.api.executeQuery(
             """
             SELECT v.make, v.model, v.year, v.color
-            FROM registrations JOIN vehicles v on registrations.vin = (?)
+            FROM registrations JOIN vehicles v using (vin)
+            WHERE regno = (?)
             """,
-            reg_no
+            (reg_no,)
         )
+        print(registered)
         ticket_no = randint(0, 999999)
-        print(ticket_no)
         ticket_text = input("Enter violation: ")
-        ticket_amount = input("Enter fine amount: ")
-        ticket_date = input("Enter date(default to today: ")
+        ticket_amount = int(input("Enter fine amount: "))
+        ticket_date = input("Enter date (leave empty for today): ")
         ticket_date = datetime.date.today() if ticket_date == "" else ticket_date
 
-        self.c.execute(
-            """
-            INSERT INTO tickets (fine, violation, regno, vdate, tno) 
-            VALUES (?,?,?,?,?)
-            """,
-            (ticket_amount, ticket_text, int(reg_no), ticket_date, ticket_no)
-        )
-        self.conn.commit()
+        try:
+            if ticket_amount > 0:
+                self.api.executeQuery(
+                    """
+                    INSERT INTO tickets (fine, violation, regno, vdate, tno)
+                    VALUES (?,?,?,?,?)
+                    """,
+                    (ticket_amount, ticket_text, int(reg_no), ticket_date, ticket_no),
+                    True
+                )
+                print("The ticket is issued")
+        except Exception as e:
+            print("Invalid fine amount")
 
     def find_owner(self, args):
         # ARGS: {make, model, year, color, plate}
@@ -418,14 +462,12 @@ class Main:
 if __name__ == "__main__":
     m = Main("DB")
     m.setup()
-    s = Sanitizer()
     while True:
         if m.quitProgram:
             break
         elif not m.user:
             user_name = input("Enter your id: ")
             user_pass = getpass("Enter your password: ")
-            s.sanitize_input(user_name, user_pass)
             try:
                 m.login(user_name, user_pass)
             except Exception as e:
@@ -433,4 +475,3 @@ if __name__ == "__main__":
         else:
             user_in = input("Enter a command: ")
             m.execute(user_in)
-            s.sanitize_input(user_in)
