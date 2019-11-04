@@ -416,35 +416,40 @@ class Main():
         except Exception as e:
             print("Invalid fine amount")
 
-    def find_owner(self, args):
+    def findOwner(self, args):
         # ARGS: {make, model, year, color, plate}
         # Return all matches
         # if |m| > 4: make, model, year, color and let user select
         # if |m| < 4 OR from above show:
         #   make, model, year, color, plate, latest reg date, expiry date, latest name
-        # TODO: What if reg empty?
+        # String has to be key:val, space separated
         make, model, year, color, plate = "", "", "", "", ""
+        arg_to_dict = {}
+        for el in args:
+            key_val = el.split(': ')
+            arg_to_dict[key_val[0]] = key_val[1]
+
         try:
-            make = args[1]
+            make = arg_to_dict['make']
         except IndexError:
             make = ""
         try:
-            model = args[2]
+            model = arg_to_dict['model']
         except IndexError:
             model = ""
         try:
-            year = args[3]
+            year = arg_to_dict['year']
         except IndexError:
             year = ""
         try:
-            color = args[4]
+            color = arg_to_dict['color']
         except IndexError:
             color = ""
         try:
-            plate = args[5]
+            plate = arg_to_dict['plate']
         except IndexError:
             plate = ""
-        self.c.execute(
+        matches = self.api.executeQuery(
             """
             SELECT *
             FROM registrations JOIN vehicles v on registrations.vin = v.vin
@@ -456,7 +461,7 @@ class Main():
                 plate = ?
             """,
             (make, model, year, color, plate))
-        print(self.c.fetchall())
+        print(matches)
 
 
 if __name__ == "__main__":
