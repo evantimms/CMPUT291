@@ -343,6 +343,7 @@ class Main():
         person = api.getPerson(fname, lname)
         if person == None:
             print("Invalid person entry")
+<<<<<<< HEAD
         else:
             personInDB = True 
             firstName = person[0]
@@ -368,6 +369,34 @@ class Main():
             WHERE fname LIKE ? AND lname LIKE ?;
             """,
             (firstName, lastName))
+=======
+
+        # get driver's abstract
+        # ToDo: finish the query
+
+        # sort tickets
+        count = 0
+        loops = 0
+        # get ticket count
+
+    #    todo cursor.execute("SELECT * from tickets where (# enter conditions))
+    # ticket_set = self.c.fetchall()
+
+    # Show 5 tickets if more than 5 and allow user to see more
+    # if count == 5 or ticket == ticket_set[len(ticket_set) - 1]:
+    #     choice = input("Select one of these tickets? (Enter option # or press enter to see more)")
+    #     if choice == '':
+    #         count = -1
+    #         loops +=1
+    #     else:
+    #         try:
+    #             choice = int(choice)
+    #             return ticket_set[(loops * 4) + (choice - 1)][0]
+    #         except ValueError:
+    #             print("Invalid option. Please retry.")
+    #             # return
+    # count += 1
+>>>>>>> 3ca8de1c7396096f8d0004b7964427e76bf12b56
 
         demeritNoticeCount = self.api.fetchone()[0]
         print("Demerit Notice Count for the person: ", demeritNoticeCount)       
