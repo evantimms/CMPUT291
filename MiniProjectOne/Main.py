@@ -325,46 +325,106 @@ class Main():
             raise Exception("Missing Argument(s)")
 
     def getAbstract(self, args):
-        # get the person's name from the user
-        fname = input("Enter first name of the person: ")
-        lname = input("Enter last name of the person: ")
-
-        # Ensure the person belongs to database
-        person = self.api.executeQuery(
-            """
-            SELECT regno FROM births b1, births b2 WHERE b1.regno = b2.regno
-            AND b1.fname = ? and b2.lname = ?
-            """,
-            (fname, lname)
-        )
+        # get the person's name from the user and validate it
+        personInDB = False
+        while not personInDB:
+            fname = input("Enter first name of the person: ").strip()
+            if fname == "":
+                return
+            lname = input("Enter last name of the person: ").strip()
+            if lname == "":
+                return
+    
+        # get person
+        person = api.getPerson(fname, lname)
         if person == None:
             print("Invalid person entry")
+        else:
+            personInDB = True 
+            firstName = person[0]
+            lastName = person[0]
         
-        # get driver's abstract
-        # ToDo: finish the query
+        # After person's anme is obtained, get friver's abstract for the person
+        print("Driver Abstract of the chosen person is as follows:")
 
-        # sort tickets
-        count = 0
-        loops = 0
-        # get ticket count
-    #    todo cursor.execute("SELECT * from tickets where (# enter conditions))
-        # ticket_set = self.c.fetchall()
+        # Get ticket count
+        self.api.executeQuery("""
+            SELECT COUNT(t.tno) FROM registrations r, tickets t
+            WHERE t.regno = r.regno
+            AND r.fname LIKE ? AND r.lname LIKE ?;
+            """,
+            (firstName, lastName))
 
-        # Show 5 tickets if more than 5 and allow user to see more
-        # if count == 5 or ticket == ticket_set[len(ticket_set) - 1]:
-        #     choice = input("Select one of these tickets? (Enter option # or press enter to see more)")
-        #     if choice == '':
-        #         count = -1
-        #         loops +=1
-        #     else:
-        #         try:
-        #             choice = int(choice)
-        #             return ticket_set[(loops * 4) + (choice - 1)][0]
-        #         except ValueError:
-        #             print("Invalid option. Please retry.")
-        #             # return 
-        # count += 1
+        ticketCount = self.api.fetchone()[0]
+        print("Ticket Count for the person: ", ticketCount)
 
+        # Get count of demerit notices
+        self.api.executeQuery("""
+            SELECT COUNT(ddate) FROM demeritNotices
+            WHERE fname LIKE ? AND lname LIKE ?;
+            """,
+            (firstName, lastName))
+
+        demeritNoticeCount = self.api.fetchone()[0]
+        print("Demerit Notice Count for the person: ", demeritNoticeCount)       
+
+        # Get count of demerit notices within last 2 years
+        endTIME = dt.now()
+        startTime = endTIME.replace(year = endTIME.year - 2)
+        
+        self.api.executeQuery("""
+            SELECT SUM(points) FROM demeritNotices
+            WHERE ddate > ? 
+            AND fname LIKE ? AND lname LIKE ?;
+            """,
+            (startTime, firstName, lastName))
+
+        demeritLast2Years = self.api.fetchone()[0]
+        print("Demerit Notice Count for the person within last 2 years: ", demeritLast2Years)     
+
+        # Get total count of demerit notices
+        self.api.executeQuery("""
+            SELECT SUM(points) FROM demeritNotices
+            WHERE fname LIKE ? AND lname LIKE ?;
+            """,
+            (firstName, lastName))
+
+        demeritTotal = self.api.fetchone()[0]
+        print("Total Demerit Notice Count for the person: ", demeritTotal)       
+
+        # For more tickets than 4:
+        displayTickets = input("Do yo wish to see all tickets for the chosen person? Y to continue")
+        if displayTickets == "Y":
+            # display tickets in sorted order
+            self.api.executeQuery("""
+            SELECT t.tno, t.vdate, t.violation, t.fine, t.regno, v.make, v.model
+            FROM tickets t, vehicles v, registrations r
+            WHERE t.regno = r.regno
+            AND r.vin = v.vin
+            AND r.fname LIKE ? AND r.lname LIKE ?
+            ORDER BY v.vdate DESC;
+            """,
+            (firstName, lastName))
+
+        displayAllTickets = self.api.fetchall()
+        counter = 0
+        displayNext = True
+        while counter < ticketCount and displayNext:
+            for i in range(5):
+                print("Ticket Number: ", displayAllTickets[counter][0])
+                print("Violation Date: ", displayAllTickets[counter][1])
+                print("Violation Description: ", displayAllTickets[counter][3])
+                print("Fine Amount: ", displayAllTickets[counter][4])
+                print("Registration Number: ", displayAllTickets[counter][5])
+                print("Vehicle Model: ", displayAllTickets[counter][6])
+                counter += 1
+                if counter == ticketCount:
+                    break
+            if counter < ticketCount:
+                displayNextTickets = input("Do yo wish to see all other remaining tickets? Y to continue")
+                if displayNextTickets == "Y":
+                    displayNext = False
+        print("All tickets for the chosen person have been printed")
 
     def issue(self, args):
         rno = args[1]
