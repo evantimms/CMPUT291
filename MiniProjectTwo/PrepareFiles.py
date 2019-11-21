@@ -14,8 +14,18 @@ def write_to_terms(row, subject, body):
 
 
 def write_to_emails(row, frm, to, cc, bcc):
-    # TODO: ME
-    pass
+    """
+    One line per email (i.e. frm, to, produce 2 lines)
+    All emails are made lowercase
+    """
+    if frm:
+        emails.write("from-{}:{}\n".format(frm.lower(), row))
+    if to:
+        emails.write("to-{}:{}\n".format(to.lower(), row))
+    if cc:
+        emails.write("from-{}:{}\n".format(cc.lower(), row))
+    if bcc:
+        emails.write("from-{}:{}\n".format(bcc.lower(), row))
 
 
 def write_to_dates(row, date):
