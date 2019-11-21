@@ -76,7 +76,7 @@ class DBApi():
         and incremenent the counter
     }
     """
-    def executeQuery(self, query, params = (), commit = True):
+    def executeQuery(self, query, params = (), commit = False):
         data = self.c.execute(query, params).fetchall()
         if commit:
             self.conn.commit()

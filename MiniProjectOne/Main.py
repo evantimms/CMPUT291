@@ -136,6 +136,7 @@ class Main():
                     "SELECT address, phone FROM persons WHERE fname = ? AND lname = ?",
                     (mFname, mLname)
                 )
+
                 self.api.executeQuery(
                     """
                     INSERT INTO persons (fname, lname, bdate, bplace, address, phone)
@@ -178,11 +179,11 @@ class Main():
             if not p1:
                 # get p1 from user
                 print("Cannot find partner 1")
-                self.api.createPerson(p1Fname, p1Lname)
+                self.api.getPerson(p1Fname, p1Lname)
             if not p2:
                 # get p2 from user
                 print("Cannot find partner 2")
-                self.api.createPerson(p2Fname, p2Lname)
+                self.api.getPerson(p2Fname, p2Lname)
 
             # enter marriage
             self.api.executeQuery(
@@ -258,7 +259,7 @@ class Main():
             # set the expiry date of the current registration
             regnoOld = self.api.executeQuery(
                 """
-                SELECT regno FROM registrations r, vehicles v WHERE  r.vin = v.vin
+                SELECT regno FROM registrations r, vehicles v WHERE WHERE r.vin = v.vin
                 AND r.fname = ? and r.lname = ?
                 """,
                 (currentOwnerFname, currentOwnerLname)
@@ -339,9 +340,10 @@ class Main():
                 return
     
         # get person
-        person = self.api.getPerson(fname, lname)
+        person = api.getPerson(fname, lname)
         if person == None:
             print("Invalid person entry")
+<<<<<<< HEAD
         else:
             personInDB = True 
             firstName = person[0]
@@ -367,6 +369,34 @@ class Main():
             WHERE fname LIKE ? AND lname LIKE ?;
             """,
             (firstName, lastName))
+=======
+
+        # get driver's abstract
+        # ToDo: finish the query
+
+        # sort tickets
+        count = 0
+        loops = 0
+        # get ticket count
+
+    #    todo cursor.execute("SELECT * from tickets where (# enter conditions))
+    # ticket_set = self.c.fetchall()
+
+    # Show 5 tickets if more than 5 and allow user to see more
+    # if count == 5 or ticket == ticket_set[len(ticket_set) - 1]:
+    #     choice = input("Select one of these tickets? (Enter option # or press enter to see more)")
+    #     if choice == '':
+    #         count = -1
+    #         loops +=1
+    #     else:
+    #         try:
+    #             choice = int(choice)
+    #             return ticket_set[(loops * 4) + (choice - 1)][0]
+    #         except ValueError:
+    #             print("Invalid option. Please retry.")
+    #             # return
+    # count += 1
+>>>>>>> 3ca8de1c7396096f8d0004b7964427e76bf12b56
 
         demeritNoticeCount = self.api.fetchone()[0]
         print("Demerit Notice Count for the person: ", demeritNoticeCount)       
