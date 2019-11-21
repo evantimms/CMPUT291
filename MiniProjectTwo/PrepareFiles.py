@@ -2,7 +2,7 @@ import sys
 import re
 
 # load the xml file
-xml = open("Input10.xml", "r")
+xml = open(sys.argv[1], "r")
 terms = open("terms.txt", "w")
 emails = open("emails.txt", "w")
 dates = open("dates.txt", "w")
@@ -15,7 +15,12 @@ def writeToEmails(row, frm, to, cc, bcc):
     pass
 
 def writeToDates(row, date):
-    pass
+    """
+    Writes the row and the date to dates.txt, where the format is 'd:l'
+    where d is the date of the email, and l is the row id.
+    """
+    if date and row and len(date):
+        dates.write("{}:{}\n".format(date,row))
 
 def writeToRecs(row, line):
     pass
