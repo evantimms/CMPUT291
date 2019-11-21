@@ -8,21 +8,26 @@ emails = open("emails.txt", "w")
 dates = open("dates.txt", "w")
 recs = open("recs.txt", "w")
 
-def writeToTerms(row, subject, body):
+
+def write_to_terms(row, subject, body):
     pass
 
-def writeToEmails(row, frm, to, cc, bcc):
+
+def write_to_emails(row, frm, to, cc, bcc):
+    # TODO: ME
     pass
 
-def writeToDates(row, date):
+
+def write_to_dates(row, date):
     """
     Writes the row and the date to dates.txt, where the format is 'd:l'
     where d is the date of the email, and l is the row id.
     """
     if date and row and len(date):
-        dates.write("{}:{}\n".format(date,row))
+        dates.write("{}:{}\n".format(date, row))
 
-def writeToRecs(row, line):
+
+def write_to_recs(row, line):
     pass
 
 
@@ -42,7 +47,7 @@ def main():
             writeToEmails(row, frm, to, bcc, cc)
             writeToDates(row, date)
             writeToRecs(row, l)
-        
+
 
 if __name__ == "__main__":
     main()
