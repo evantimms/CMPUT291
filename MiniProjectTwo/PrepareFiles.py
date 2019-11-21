@@ -14,10 +14,10 @@ def writeToTerms(row, subject, body):
 def writeToEmails(row, frm, to, cc, bcc):
     pass
 
-def writeToRecs(row, date):
+def writeToDates(row, date):
     pass
 
-def writeToDates(row, line):
+def writeToRecs(row, line):
     pass
 
 
