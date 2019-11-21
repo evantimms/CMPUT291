@@ -33,12 +33,17 @@ def write_to_dates(row, date):
     Writes the row and the date to dates.txt, where the format is 'd:l'
     where d is the date of the email, and l is the row id.
     """
-    if date and row and len(date):
+    if date and len(date):
         dates.write("{}:{}\n".format(date, row))
 
 
 def write_to_recs(row, line):
-    pass
+    """
+    Writes the row and the line in xml to recs.txt, in form 
+    I:rec where I is the row id and rec is the full email record in XML.
+    """
+    if line:
+        recs.write("{}:{}".format(row, line))
 
 
 def main():
@@ -53,10 +58,10 @@ def main():
             body = re.search("<body>(.*)</body>", l).group(1)
             subj = re.search("<subj>(.*)</subj>", l).group(1)
 
-            writeToTerms(row, subj, body)
-            writeToEmails(row, frm, to, bcc, cc)
-            writeToDates(row, date)
-            writeToRecs(row, l)
+            write_to_terms(row, subj, body)
+            write_to_emails(row, frm, to, bcc, cc)
+            write_to_dates(row, date)
+            write_to_recs(row, l)
 
 
 if __name__ == "__main__":
