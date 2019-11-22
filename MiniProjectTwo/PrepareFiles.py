@@ -10,7 +10,25 @@ recs = open("recs.txt", "w")
 
 
 def write_to_terms(row, subject, body):
-    pass
+    rgx_for_terms = (
+        "[0 - 9a-zA-Z_-]"   # Captures alphanumber, dash, underscore
+        "{2, }"             # Captures 2 or more occurnces of
+        "\w"                # End capture at whitespace
+    )
+
+    # Ignore &#.*;, &#\d;, &lt;, $gt; &amp;, &apos; and &quot;
+    subject_with_special_removed = re.sub('&.*;', '', subject)
+    body_with_special_removed = re.sub('&.*;', '', body)
+
+    # Get terms
+    captured_subject_terms = re.findall(rgx_for_terms, subject_with_special_removed)
+    captured_body_terms = re.findall(rgx_for_terms, body_with_special_removed)
+
+    # Print to file
+    for subject_term in captured_subject_terms:
+        terms.write("s-{}:{}".format(subject_term.lower(), row))
+    for body_term in captured_body_terms:
+        terms.write("b-{}:{}".format(body_term.lower(), row))
 
 
 def write_to_emails(row, frm, to, cc, bcc):
