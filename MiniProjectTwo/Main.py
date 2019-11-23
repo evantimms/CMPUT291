@@ -1,9 +1,26 @@
 from bsddb3 import db
 import re
 
-def main():
-    print(db.version())
+# Grammar
+alphanumeric = "[0-9a-zA-Z_-]"
+numeric = "[0-9]"
+date = "{numeric}{numeric}{numeric}{numeric}/{numeric}{numeric}/{numeric}{numeric}"
+datePrefix = 'date' whitespace* (':' | '>' | '<' | '>=' | '<=')
+dateQuery = datePrefix whitespace* date
+emailterm = alphanumeric+ | alphanumeric+ '.' emailterm
+email = emailterm '@' emailterm
+emailPrefix	= (from | to | cc | bcc) whitespace* ':'
+emailQuery = emailPrefix whitespace* email
+term = alphanumeric+
+termPrefix	= (subj | body) whitespace* ':'
+termSuffix = '%' 
+termQuery = termPrefix? whitespace* term termSuffix?
+expression = dateQuery | emailQuery | termQuery 
+query = expression (whitespace expression)*
+modeChange = 'output=full' | 'output=brief'
+command = query | modeChange
 
+def main():
 	# Open the databases
     termsDB = db.DB()
     emailsDB = db.DB()
@@ -27,8 +44,9 @@ def main():
         if query.upper() == 'QUIT':
             quit_program = True
             continue
-        valid, queries = verify(query) #Set to True if query is vaild, false otherwise. Queries will be list of tuples or None
-        if valid:
+
+        if verify(query):
+            queries = query.split(expression)
             results = []
             for item in queries:
                 for option in item:
@@ -54,7 +72,7 @@ def main():
                     results = results[0] #Only one lists in results
                 printResults(results, recsCursor, full, brief) #Prints relevant information for all aID's in results
         else:
-            print("That is an invalid query. Please try again.")
+            print("Your input contains an invalid query. Please try again.")
     print("Goodbye.")
 
 # QUERIES HERE
@@ -75,9 +93,10 @@ def findMatches(results):
 
 def verify(query):
     """
-    Should takes in query and returns either True or False and either None or split contents
+    Validates a query
     """
-    pass
+    return re.matches(query, query)
+    
 
 if __name__ == "__main__":
     main()
