@@ -43,9 +43,9 @@ def write_to_emails(row, frm, to, cc, bcc):
     if to:
         emails.write("to-{}:{}\n".format(to.lower(), row))
     if cc:
-        emails.write("from-{}:{}\n".format(cc.lower(), row))
+        emails.write("cc-{}:{}\n".format(cc.lower(), row))
     if bcc:
-        emails.write("from-{}:{}\n".format(bcc.lower(), row))
+        emails.write("bcc-{}:{}\n".format(bcc.lower(), row))
 
 
 def write_to_dates(row, date):
