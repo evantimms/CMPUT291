@@ -10,7 +10,7 @@ recs = open("recs.txt", "w")
 
 
 def write_to_terms(row, subject, body):
-    rgx_for_terms = (
+    term_pattern = (
         "[0 - 9a-zA-Z_-]"   # Captures alphanumber, dash, underscore
         "{2, }"             # Captures 2 or more occurnces of
         "\w"                # End capture at whitespace
@@ -21,8 +21,8 @@ def write_to_terms(row, subject, body):
     body_with_special_removed = re.sub('&.*;', '', body)
 
     # Get terms
-    captured_subject_terms = re.findall(rgx_for_terms, subject_with_special_removed)
-    captured_body_terms = re.findall(rgx_for_terms, body_with_special_removed)
+    captured_subject_terms = re.findall(term_pattern, subject_with_special_removed)
+    captured_body_terms = re.findall(term_pattern, body_with_special_removed)
 
     # Print to file
     for subject_term in captured_subject_terms:
