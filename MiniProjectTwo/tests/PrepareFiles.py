@@ -10,11 +10,10 @@ recs = open("recs.txt", "w")
 
 
 def write_to_terms(row, subject, body):
-    # Raw string with comments to keep the regex readable
     term_pattern = (
         r'\b'    # Beginning of word boundary
         r'[\w-]' # alphanumeric, underscore, dash
-        r'{3,}'  # Ignore words with 2 or less characteres
+        r'{3,}'  # 3 or more times
         r'\b'    # End of word boundary
     )
 
