@@ -1,23 +1,20 @@
 from bsddb3 import db
 import re
 
-# Grammar
-# term = alphanumeric+
-# termPrefix	= (subj | body) whitespace* ':'
-# termSuffix = '%'
-# termQuery = termPrefix? whitespace* term termSuffix?
-# expression = dateQuery | emailQuery | termQuery
-# query = expression (whitespace expression)*
-# modeChange = 'output=full' | 'output=brief'
-# command = query | modeChange
-#
-term_prefix = (
-	r'((subj)|(body))'	# contains subject or body
-	r'\s*'				# zero or more spaces		
-    r':'				# colon
+mode_change = r'output=(?:(full)|(brief))' # capture group 1) whole command 2) which mode
+
+term_query_with_prefix = (
+	r'((subj\s*:)'	# Has either subj zero or more whitespace and colon
+	r'|(body\s*:))'	# or body zero or more whitespace and colon
+	r'\s*'			# zero or more whitespace are prefix
+	r'(\w+%?)'		# word that optionally ends with %
+	r'\s'			# space boundary (not \b)
 )
-
-
+term_query_without_prefix = (
+	r'(^|\s+)'	# starts at beginning of line or with at least one space
+	r'\w+%?'	# Word optionally ending with %
+	r'\s'		# Space boundary
+)
 
 email_prefix = (
 	r'((from)|(to)|(cc)|(bcc))' # one of address fields
