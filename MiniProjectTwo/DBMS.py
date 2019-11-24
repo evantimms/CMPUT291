@@ -22,12 +22,12 @@ class DBMS:
         Runs a date query and intersets the results with the master ids
         """
 
-    def runEmailQuery(self):
+    def runEmailQuery(self, firstTerm, secondTerm):
         """
         Runs an email query and intersets the results with the master ids
         """
 
-    def runTermQuery(self):
+    def runTermQuery(self, prefix, term, suffix):
         """
         Runs a term query and intersets the results with the master ids
         """
@@ -36,6 +36,8 @@ class DBMS:
         """
         Prints all the results from the records database that correspond to id's mast_ids
         """
+        for rec_id in self.master_ids:
+            pass
     
     def resetQuery(self):
         """
