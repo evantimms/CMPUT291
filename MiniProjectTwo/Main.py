@@ -32,11 +32,11 @@ email = (
 email_query = email_prefix + r'\s*' + email  # Group 1) field, 2) email
 
 date_prefix = (
-    r'(?:date)'  # starts with date (dont capture)
+    r'(?P<operator>date)'  # starts with date (dont capture)
     '\s*'  # Zero or more
     '(:|>=|<=|>|<)'  # Order of operators matters: > before >= won't capture equals
 )
-date = r'(\d{4}/\d{2}/\d{2})'  # yyy/mm/dd format
+date = r'(?P<date>\d{4}/\d{2}/\d{2})'  # yyy/mm/dd format
 date_query = date_prefix + r'\s*' + date  # Group 1) operator 2) date
 
 
@@ -67,19 +67,17 @@ def main():
             else:
                 raise ValueError("Invalid argument for output: {}".format(output))
 
-        if verify(user_in):
-            dbms.resetQuery()
-            for date_condition in re.finditer(date_query, user_in):
-                dbms.runDateQuery(date_condition['operator'], date_condition['date'])
-            for email_condition in re.finditer(email_query, user_in):
-                dbms.runEmailQuery(email_condition['field'], email_condition['email'])
-            for term_condition in re.finditer(term_query_with_prefix, user_in):
-                dbms.runTermQuery(term_condition['field'], term_condition['term'])
-            for term_condition in re.finditer(term_query_without_prefix, user_in):
-                dbms.runTermQuery(None, term_condition['term'])
-            dbms.getResults(full_output)
-        else:
-            print("Your input contains an invalid query. Please try again.")
+        dbms.resetQuery()
+        for date_condition in re.finditer(date_query, user_in):
+            dbms.runDateQuery(date_condition['operator'], date_condition['date'])
+        for email_condition in re.finditer(email_query, user_in):
+            dbms.runEmailQuery(email_condition['field'], email_condition['email'])
+        for term_condition in re.finditer(term_query_with_prefix, user_in):
+            dbms.runTermQuery(term_condition['field'], term_condition['term'])
+        for term_condition in re.finditer(term_query_without_prefix, user_in):
+            dbms.runTermQuery(None, term_condition['term'])
+        dbms.getResults(full_output)
+
     print("Thanks! Goodbye.")
 
 

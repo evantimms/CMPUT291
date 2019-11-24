@@ -95,9 +95,6 @@ class DBMS:
         """
         Prints all the results from the records database that correspond to id's mast_ids 
         """
-        if not len(self.master_ids):
-            print("No results for this query.")
-
         for key in self.master_ids:
             rec = self.recs_DB.get(str(key).encode())
             if full_output:
@@ -105,6 +102,8 @@ class DBMS:
             else:
                 title = re.search("<subj>(.*)</subj>", str(rec)).group(1)
                 print(key, title)
+
+        print("End of results.")
     
     def resetQuery(self):
         """
