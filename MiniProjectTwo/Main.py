@@ -1,4 +1,4 @@
-import DBMS
+from DBMS import DBMS
 import re
 
 mode_change = r'output=(?:(full)|(brief))'  # capture group 1) whole command 2) which mode
@@ -46,25 +46,24 @@ def verify(user_in):
 
 
 def main():
-    # Open the databases
-    full = False
-    brief = True
     quit_program = False
-
+    full_output = False # Default output is brief
     dbms = DBMS()
 
     while not quit_program:  # Continue until user quits
-        user_in = input("Enter your user_in. QUIT to exit.\n")
+        user_in = input("Enter a query. QUIT to exit.\n")
         if user_in.upper() == 'QUIT':
             quit_program = True
             continue
 
-        # TODO: Check for mode change
-        if mode_change:
+        if re.match(mode_change, user_in):
+            output = user_in.split("=")[1]
             if output == "full":
-                self.full_output = True
+                full_output = True
+                print("Output changed to full.")
             elif output == "brief":
-                self.full_output = False
+                full_output = False
+                print("Output changed to brief.")
             else:
                 raise ValueError("Invalid argument for output: {}".format(output))
 
@@ -79,7 +78,7 @@ def main():
             for term_condition in re.finditer(term_query_without_prefix, user_in):
                 dbms.runTermQuery(None, term_condition['term'])
             # TODO: Determine how to handle an empty query (we may not even need to handle it - just an empty output)
-            dbms.getResults()
+            dbms.getResults(full_output)
         else:
             print("Your input contains an invalid query. Please try again.")
     print("Thanks! Goodbye.")
