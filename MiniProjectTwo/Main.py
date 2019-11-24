@@ -4,38 +4,59 @@ import re
 mode_change = r'output=(?:(full)|(brief))'  # capture group 1) whole command 2) which mode
 
 term_query_with_prefix = (
-    r'((subj\s*:)'  # Has either subj zero or more whitespace and colon
-    r'|(body\s*:))'  # or body zero or more whitespace and colon
+    r'((?:subj\s*:)'  # Has either subj zero or more whitespace and colon
+    r'|(?:body\s*:))'  # or body zero or more whitespace and colon
     r'\s*'  # zero or more whitespace are prefix
     r'(\w+%?)'  # word that optionally ends with %
     r'\s'  # space boundary (not \b)
 )
 term_query_without_prefix = (
-    r'(^|\s+)'  # starts at beginning of line or with at least one space
-    r'\w+%?'  # Word optionally ending with %
+    r'(?:^|\s+)'  # starts at beginning of line or with at least one space
+    r'(\w+%?)'  # Word optionally ending with %
     r'\s'  # Space boundary
 )
 
 email_prefix = (
-    r'((from)|(to)|(cc)|(bcc))'  # one of address fields
+    r'((?:from)|(?:to)|(?:cc)|(?:bcc))'  # one of address fields
     r'\s?'  # zero or more spaces
     r':'  # semicolon
 )
 email = (
-    r'[\w.]+'  # one or more email chars
+    r'([\w.]+'  # one or more email chars
     r'@'  # at sign
-    r'[\w.]+'  # one or more email chars
+    r'[\w.]+)'  # one or more email chars
 )
-email_query = email_prefix + r'\s*' + email
+email_query = email_prefix + r'\s*' + email  # Group 1) field, 2) email
 
 date_prefix = (
-    r'(date)'  # starts with date
+    r'(?:date)'  # starts with date (dont capture)
     '\s*'  # Zero or more
     '(:|>=|<=|>|<)'  # Order of operators matters: > before >= won't capture equals
 )
-date = r'\d{4}/\d{2}/\d{2}'  # yyy/mm/dd format
-date_query = date_prefix + r'\s*' + date
+date = r'(\d{4}/\d{2}/\d{2})'  # yyy/mm/dd format
+date_query = date_prefix + r'\s*' + date  # Group 1) operator 2) date
 
+
+# def runDateQuery(self, date, operator):
+def process_date_expression(exp):
+    return re.findall(email_query, exp)
+
+
+def build_queries(exp):
+    dates = [{'operator': op, 'date_string': dt} for op, dt in re.findall(date_query, exp)]
+    # def runEmailQuery(self, emailPrefix, firstTerm, secondTerm):
+    emails = [{'field': field, 'email': address} for field, address in re.findall(email_query, exp)]
+    terms = [{'field': field, 'term': term} for field, term in re.findall(term_query_with_prefix, exp)]
+    terms += [{'field': None, 'term': term} for term in re.findall(term_query_without_prefix, exp)]
+    return {
+        "dates": dates,
+        "emails": emails,
+        "terms": terms
+    }
+
+def verify(user_in):
+    # TODO: how to verify? One big regex is unpredicatable and likely error prone
+    return True
 
 def main():
     # Open the databases
@@ -52,20 +73,16 @@ def main():
             continue
 
         if verify(user_in):
-            queries = buildQueries(user_in)
             dbms.resetQuery()
-            for query in query:
-                if re.matches(query, dateQuery):
-                    # TODO: Build query parts
-                    dbms.runDateQuery()
-                elif re.matches(query, emailQuery):
-                    # TODO: Build query parts
-                    ids = dbms.runEmailQuery()
-                elif re.matches(query, termQuery):
-                    # TODO: Build query parts
-                    dbms.runTermQuery()
-                else:
-                    raise Exception("cannot match query with any type.")
+            for date_condition in [{'operator': op, 'date_string': dt} for op, dt in re.findall(date_query, user_in)]:
+                dbms.runDateQuery(date_condition['op'], date_condition['date_string'])
+            for email_condition in [{'field': field, 'email': address} for field, address in re.findall(email_query, user_in)]:
+                dbms.runEmailQuery(email_condition['field'], email_condition['email'])
+            for term_condition in [{'field': field, 'term': term} for field, term in re.findall(term_query_with_prefix, user_in)]
+                dbms.runTermQuery(term_condition['field'], term_condition['term'])
+            for term_condition in [{'field': field, 'term': term} for field, term in re.findall(term_query_without_prefix, user_in)]
+                dbms.runTermQuery(term_condition['field'], term_condition['term'])
+            # TODO: Have default for empty result
             dbms.getResults()
         else:
             print("Your input contains an invalid query. Please try again.")

@@ -19,7 +19,7 @@ class DBMS:
         self.master_ids = None
         self.query_count = 0
 
-    def runDateQuery(self, date, operator):
+    def runDateQuery(self, operator, date):
         """
         Runs a date query and intersets the results with the master ids
         """
@@ -42,7 +42,7 @@ class DBMS:
         self._addToMasterIds(res)
 
 
-    def runEmailQuery(self, emailPrefix, firstTerm, secondTerm):
+    def runEmailQuery(self, field, email_address):
         """
         Runs an email query and intersets the results with the master ids
         """
@@ -51,10 +51,12 @@ class DBMS:
 
         self._addToMasterIds(res)
 
-    def runTermQuery(self, prefix, term, suffix):
+    def runTermQuery(self, field, term):
         """
         Runs a term query and intersets the results with the master ids
         """
+        # TODO: Check if the term has a % at the end - if it does, you need to expand the search
+        # Its simpler to check it here than to catch it with regex
 
     def getResults(self):
         """
