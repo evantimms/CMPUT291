@@ -60,8 +60,12 @@ class DBMS:
         """
         Prints all the results from the records database that correspond to id's mast_ids
         """
-        for rec_id in self.master_ids:
-            pass
+        curr = self.recs_cursor.first()
+        while curr:
+            record = self.recs_cursor.current()
+            if int(record[0].decode()) in self.master_ids:
+                print(record[1].decode())
+            curr = self.recs_cursor.next()
     
     def resetQuery(self):
         """
@@ -78,17 +82,17 @@ class DBMS:
             self.master_ids = res
         else:
             self.master_ids = self.master_ids.intersection(res)
-        print(self.master_ids)
         self.query_count += 1
 
 
 # Tests
-# dbms = DBMS()
+dbms = DBMS()
 # dbms.runDateQuery("2000/10/02", ":")
 # dbms.resetQuery()
 # dbms.runDateQuery("2000/10/02", ">")
 # dbms.resetQuery()
-# dbms.runDateQuery("2000/10/02", "<")
+dbms.runDateQuery("2000/10/02", "<")
+dbms.getResults()
 # dbms.resetQuery()
 # dbms.runDateQuery("2000/10/02", ">=")
 # dbms.resetQuery()
