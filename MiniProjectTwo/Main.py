@@ -1,4 +1,5 @@
-import DBMS
+from DBMS import DBMS
+import sys
 import re
 
 mode_change = r'output=(?:(full)|(brief))'  # capture group 1) whole command 2) which mode
@@ -34,11 +35,11 @@ email_query = email_prefix + r'\s*' + email  # Group 1) field, 2) email
 
 
 date_prefix = (
-    r'(?:date)'  # starts with date (dont capture)
+    r'(?P<operator>date)'  # starts with date (dont capture)
     '\s*'  # Zero or more
     '(:|>=|<=|>|<)'  # Order of operators matters: > before >= won't capture equals
 )
-date = r'(\d{4}/\d{2}/\d{2})'  # yyy/mm/dd format
+date = r'(?P<date>\d{4}/\d{2}/\d{2})'  # yyy/mm/dd format
 date_query = date_prefix + r'\s*' + date  # Group 1) operator 2) date
 
 
@@ -47,45 +48,70 @@ def verify(user_in):
     return True
 
 
-def main():
-    # Open the databases
-    full = False
-    brief = True
+def main(testQuery = None):
     quit_program = False
-
+    full_output = False # Default output is brief
     dbms = DBMS()
 
     while not quit_program:  # Continue until user quits
-        user_in = input("Enter your user_in. QUIT to exit.\n")
+        if testQuery:
+            user_in = testQuery
+            quit_program = True
+        else:
+            user_in = input("Enter a query. QUIT to exit.\n")
+
         if user_in.upper() == 'QUIT':
             quit_program = True
             continue
 
-        # TODO: Check for mode change
-        if mode_change:
+        if re.match(mode_change, user_in):
+            output = user_in.split("=")[1]
             if output == "full":
-                self.full_output = True
+                full_output = True
+                print("Output changed to full.")
             elif output == "brief":
-                self.full_output = False
+                full_output = False
+                print("Output changed to brief.")
             else:
                 raise ValueError("Invalid argument for output: {}".format(output))
 
-        if verify(user_in):
-            dbms.resetQuery()
-            for date_condition in re.finditer(date_query, user_in):
-                dbms.runDateQuery(date_condition['operator'], date_condition['date'])
-            for email_condition in re.finditer(email_query, user_in):
-                dbms.runEmailQuery(email_condition['field'], email_condition['email'])
-            for term_condition in re.finditer(term_query_with_prefix, user_in):
-                dbms.runTermQuery(term_condition['field'], term_condition['term'])
-            for term_condition in re.finditer(term_query_without_prefix, user_in):
-                dbms.runTermQuery(None, term_condition['term'])
-            # TODO: Determine how to handle an empty query (we may not even need to handle it - just an empty output)
-            dbms.getResults()
-        else:
-            print("Your input contains an invalid query. Please try again.")
+        dbms.resetQuery()
+        for date_condition in re.finditer(date_query, user_in):
+            dbms.runDateQuery(date_condition['operator'], date_condition['date'])
+        for email_condition in re.finditer(email_query, user_in):
+            dbms.runEmailQuery(email_condition['field'], email_condition['email'])
+        for term_condition in re.finditer(term_query_with_prefix, user_in):
+            dbms.runTermQuery(term_condition['field'], term_condition['term'])
+        for term_condition in re.finditer(term_query_without_prefix, user_in):
+            dbms.runTermQuery(None, term_condition['term'])
+        dbms.getResults(full_output)
+
     print("Thanks! Goodbye.")
 
 
+test_queries = [
+    "subj:gas",
+    "subj:gas body:earning",
+    "confidential%",
+    "from:phillip.allen@enron.com",
+    "to:phillip.allen@enron.com",
+    "to:kenneth.shulklapper@enron.com  to:keith.holst@enron.com",
+    "date:2001/03/15",
+    "date>2001/03/10",
+    "bcc:derryl.cleaveland@enron.com  cc:jennifer.medcalf@enron.com",
+    "body:stock  confidential  shares  date<2001/04/12"
+]
+
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) > 1 and sys.argv[1] == "--test":
+        for test in test_queries:
+            try:
+                print("============================")
+                main(test)
+            except Exception as e:
+                print("FAILED QUERY TEST {}".format(test))
+                print(e)
+    else:
+        main()
+
+

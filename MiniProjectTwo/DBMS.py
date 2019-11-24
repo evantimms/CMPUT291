@@ -2,7 +2,6 @@ from bsddb3 import db
 from datetime import datetime
 import re
 
-
 class DBMS:
     def __init__(self):
         self.terms_DB = db.DB()
@@ -21,7 +20,7 @@ class DBMS:
         self.master_ids = None
         self.query_count = 0
 
-    def runDateQuery(self, operator, date):
+    def runDateQuery(self, date, operator):
         """
         Runs a date query and intersets the results with the master ids
         """
@@ -93,16 +92,19 @@ class DBMS:
 
         self._addToMasterIds(res)
 
-    def getResults(self):
+    def getResults(self, full_output = False):
         """
         Prints all the results from the records database that correspond to id's mast_ids
         """
-        curr = self.recs_cursor.first()
-        while curr:
-            record = self.recs_cursor.current()
-            if int(record[0].decode()) in self.master_ids:
-                print(record[1].decode())
-            curr = self.recs_cursor.next()
+        for key in self.master_ids:
+            rec = self.recs_DB.get(str(key).encode())
+            if full_output:
+                print(rec)
+            else:
+                title = re.search("<subj>(.*)</subj>", str(rec)).group(1)
+                print(key, title)
+
+        print("End of results.")
 
     def resetQuery(self):
         """
@@ -121,19 +123,26 @@ class DBMS:
             self.master_ids = self.master_ids.intersection(res)
         self.query_count += 1
 
-
 # Tests
-dbms = DBMS()
+# dbms = DBMS()
 # dbms.runTermQuery("subj", "and%")
 # dbms.runEmailQuery("from", "phillip.allen@enron.com")
+
+# Date Query
 # dbms.runDateQuery("2000/10/02", ":")
+# dbms.getResults(True)
 # dbms.resetQuery()
 # dbms.runDateQuery("2000/10/02", ">")
+# dbms.getResults(True)
 # dbms.resetQuery()
 # dbms.runDateQuery("2000/10/02", "<")
 # dbms.getResults()
+# dbms.runDateQuery("2000/10/02", "<")
+# dbms.getResults(False)
 # dbms.resetQuery()
 # dbms.runDateQuery("2000/10/02", ">=")
+# dbms.getResults(False)
 # dbms.resetQuery()
 # dbms.runDateQuery("2000/10/02", "<=")
+# dbms.getResults(True)
 # dbms.resetQuery()
