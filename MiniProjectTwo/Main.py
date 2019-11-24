@@ -1,4 +1,5 @@
 from DBMS import DBMS
+import sys
 import re
 
 mode_change = r'output=(?:(full)|(brief))'  # capture group 1) whole command 2) which mode
@@ -45,13 +46,18 @@ def verify(user_in):
     return True
 
 
-def main():
+def main(testQuery = None):
     quit_program = False
     full_output = False # Default output is brief
     dbms = DBMS()
 
     while not quit_program:  # Continue until user quits
-        user_in = input("Enter a query. QUIT to exit.\n")
+        if testQuery:
+            user_in = testQuery
+            quit_program = True
+        else:
+            user_in = input("Enter a query. QUIT to exit.\n")
+
         if user_in.upper() == 'QUIT':
             quit_program = True
             continue
@@ -81,5 +87,29 @@ def main():
     print("Thanks! Goodbye.")
 
 
+test_queries = [
+    "subj:gas",
+    "subj:gas body:earning",
+    "confidential%",
+    "from:phillip.allen@enron.com",
+    "to:phillip.allen@enron.com",
+    "to:kenneth.shulklapper@enron.com  to:keith.holst@enron.com",
+    "date:2001/03/15",
+    "date>2001/03/10",
+    "bcc:derryl.cleaveland@enron.com  cc:jennifer.medcalf@enron.com",
+    "body:stock  confidential  shares  date<2001/04/12"
+]
+
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) > 1 and sys.argv[1] == "--test":
+        for test in test_queries:
+            try:
+                print("============================")
+                main(test)
+            except Exception as e:
+                print("FAILED QUERY TEST {}".format(test))
+                print(e)
+    else:
+        main()
+
+
