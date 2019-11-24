@@ -37,26 +37,10 @@ date = r'(\d{4}/\d{2}/\d{2})'  # yyy/mm/dd format
 date_query = date_prefix + r'\s*' + date  # Group 1) operator 2) date
 
 
-# def runDateQuery(self, date, operator):
-def process_date_expression(exp):
-    return re.findall(email_query, exp)
-
-
-def build_queries(exp):
-    dates = [{'operator': op, 'date_string': dt} for op, dt in re.findall(date_query, exp)]
-    # def runEmailQuery(self, emailPrefix, firstTerm, secondTerm):
-    emails = [{'field': field, 'email': address} for field, address in re.findall(email_query, exp)]
-    terms = [{'field': field, 'term': term} for field, term in re.findall(term_query_with_prefix, exp)]
-    terms += [{'field': None, 'term': term} for term in re.findall(term_query_without_prefix, exp)]
-    return {
-        "dates": dates,
-        "emails": emails,
-        "terms": terms
-    }
-
 def verify(user_in):
     # TODO: how to verify? One big regex is unpredicatable and likely error prone
     return True
+
 
 def main():
     # Open the databases
@@ -74,14 +58,14 @@ def main():
 
         if verify(user_in):
             dbms.resetQuery()
-            for date_condition in [{'operator': op, 'date_string': dt} for op, dt in re.findall(date_query, user_in)]:
-                dbms.runDateQuery(date_condition['op'], date_condition['date_string'])
-            for email_condition in [{'field': field, 'email': address} for field, address in re.findall(email_query, user_in)]:
-                dbms.runEmailQuery(email_condition['field'], email_condition['email'])
-            for term_condition in [{'field': field, 'term': term} for field, term in re.findall(term_query_with_prefix, user_in)]
-                dbms.runTermQuery(term_condition['field'], term_condition['term'])
-            for term_condition in [{'field': field, 'term': term} for field, term in re.findall(term_query_without_prefix, user_in)]
-                dbms.runTermQuery(term_condition['field'], term_condition['term'])
+            for date_condition in re.findall(date_query, user_in):
+                dbms.runDateQuery(date_condition[0], date_condition[1])
+            for email_condition in re.findall(email_query, user_in):
+                dbms.runEmailQuery(email_condition[0], email_condition[1])
+            for term_condition in re.findall(term_query_with_prefix, user_in):
+                dbms.runTermQuery(term_condition[0], term_condition[1])
+            for term_condition in re.findall(term_query_without_prefix, user_in):
+                dbms.runTermQuery(None, term_condition[1])
             # TODO: Have default for empty result
             dbms.getResults()
         else:
