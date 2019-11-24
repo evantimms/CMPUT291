@@ -59,7 +59,15 @@ def main():
             quit_program = True
             continue
 
-        # TODO: CHeck for mode change
+        # TODO: Check for mode change
+        if mode_change:
+            if output == "full":
+                self.full_output = True
+            elif output == "brief":
+                self.full_output = False
+            else:
+                raise ValueError("Invalid argument for output: {}".format(output))
+
         if verify(user_in):
             dbms.resetQuery()
             for date_condition in re.finditer(date_query, user_in):
@@ -74,7 +82,7 @@ def main():
             dbms.getResults()
         else:
             print("Your input contains an invalid query. Please try again.")
-    print("Goodbye.")
+    print("Thanks! Goodbye.")
 
 
 if __name__ == "__main__":

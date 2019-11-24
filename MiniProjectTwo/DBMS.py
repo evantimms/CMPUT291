@@ -46,7 +46,19 @@ class DBMS:
         """
         Runs an email query and intersets the results with the master ids
         """
+        email = str(email)
+        curr = self.emails_cursor.first()
         res = set()
+        while curr:
+            row_id = int(curr[1].decode())
+            append = (field == "from" and email) \
+                or (field == "to" and email) \
+                or (field == "cc" and email) \
+                or (field == "bcc" and email)
+            
+            if append : res.add(row_id)
+
+            curr = self.emails_cursor.next()
 
 
         self._addToMasterIds(res)
@@ -57,6 +69,26 @@ class DBMS:
         """
         # TODO: Check if the term has a % at the end - if it does, you need to expand the search
         # Its simpler to check it here than to catch it with regex
+        term = str(term)
+        curr = self.terms_cursor.first()
+        res = set()
+        while curr:
+            row_id = int(curr[1].decode())
+            append = (field == "subj" and term) \
+                or (field == "body" and term) \
+                or (field == "" and term)
+            
+            if append : res.add(row_id)
+
+            curr = self.dates_cursor.next()
+
+        if term.endswith("%"):
+            root_term = term[:-1]
+            query_terms = list((key.decode("utf-8").lower() for key, val in self.terms.items()))
+        else:
+            query_terms = [query_terms.lower()]
+
+        self._addToMasterIds(res)
 
     def getResults(self):
         """
