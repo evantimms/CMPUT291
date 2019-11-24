@@ -1,5 +1,7 @@
 from bsddb3 import db
 from datetime import datetime
+import re
+
 
 class DBMS:
     def __init__(self):
@@ -30,63 +32,64 @@ class DBMS:
             curr_date = datetime.strptime(curr[0].decode(), "%Y/%m/%d")
             row_id = int(curr[1].decode())
             append = (operator == ":" and date == curr_date) \
-                or (operator == ">" and curr_date > date) \
-                or (operator == "<" and curr_date < date) \
-                or (operator == ">=" and curr_date >= date) \
-                or (operator == "<=" and curr_date <= date)
-            
-            if append : res.add(row_id)
+                     or (operator == ">" and curr_date > date) \
+                     or (operator == "<" and curr_date < date) \
+                     or (operator == ">=" and curr_date >= date) \
+                     or (operator == "<=" and curr_date <= date)
+
+            if append: res.add(row_id)
 
             curr = self.dates_cursor.next()
-        
-        self._addToMasterIds(res)
 
+        self._addToMasterIds(res)
 
     def runEmailQuery(self, field, email_address):
         """
         Runs an email query and intersets the results with the master ids
         """
-        email = str(email)
         curr = self.emails_cursor.first()
         res = set()
         while curr:
             row_id = int(curr[1].decode())
-            append = (field == "from" and email) \
-                or (field == "to" and email) \
-                or (field == "cc" and email) \
-                or (field == "bcc" and email)
-            
-            if append : res.add(row_id)
+            row_field = re.search(r'((?:to)|(?:from)|(?:cc)|(?:bcc))-', curr[0].decode())[1]
+            row_email = re.search(r'(?:(?:to)|(?:from)|(?:cc)|(?:bcc))-(.*)', curr[0].decode())[1]
+
+            # Add row if conditionals match
+            terms_match = (re.fullmatch(row_email, email_address) is not None)
+            if row_field == field and terms_match:
+                res.add(row_id)
 
             curr = self.emails_cursor.next()
 
-
         self._addToMasterIds(res)
+
 
     def runTermQuery(self, field, term):
         """
         Runs a term query and intersets the results with the master ids
         """
-        # TODO: Check if the term has a % at the end - if it does, you need to expand the search
-        # Its simpler to check it here than to catch it with regex
-        term = str(term)
+        # curr[0] = {b,s}-term, curr[1] =  rowid
         curr = self.terms_cursor.first()
         res = set()
         while curr:
+            # Get the values from the DB
             row_id = int(curr[1].decode())
-            append = (field == "subj" and term) \
-                or (field == "body" and term) \
-                or (field == "" and term)
-            
-            if append : res.add(row_id)
+            row_field = ('body' if curr[0].decode() == 'b' else 'subj')
+            row_term = re.search(r'[bs]-(.*)', curr[0].decode())[1]
 
-            curr = self.dates_cursor.next()
+            # Do partial or full match
+            if term.endswith("%"):
+                terms_match = (re.match(term[:-1], row_term) is not None)
+            else:
+                terms_match = (re.fullmatch(term, row_term) is not None)
 
-        if term.endswith("%"):
-            root_term = term[:-1]
-            query_terms = list((key.decode("utf-8").lower() for key, val in self.terms.items()))
-        else:
-            query_terms = [query_terms.lower()]
+            # Add row if conditionals match
+            if field is None and terms_match:
+                res.add(row_id)
+            elif row_field == field and terms_match:
+                res.add(row_id)
+
+            curr = self.terms_cursor.next()
 
         self._addToMasterIds(res)
 
@@ -100,7 +103,7 @@ class DBMS:
             if int(record[0].decode()) in self.master_ids:
                 print(record[1].decode())
             curr = self.recs_cursor.next()
-    
+
     def resetQuery(self):
         """
         Resets the master ids to prepare for a new query
@@ -121,12 +124,14 @@ class DBMS:
 
 # Tests
 dbms = DBMS()
+# dbms.runTermQuery("subj", "and%")
+# dbms.runEmailQuery("from", "phillip.allen@enron.com")
 # dbms.runDateQuery("2000/10/02", ":")
 # dbms.resetQuery()
 # dbms.runDateQuery("2000/10/02", ">")
 # dbms.resetQuery()
-dbms.runDateQuery("2000/10/02", "<")
-dbms.getResults()
+# dbms.runDateQuery("2000/10/02", "<")
+# dbms.getResults()
 # dbms.resetQuery()
 # dbms.runDateQuery("2000/10/02", ">=")
 # dbms.resetQuery()
