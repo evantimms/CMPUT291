@@ -32,16 +32,14 @@ email = (
 )
 email_query = email_prefix + r'\s*' + email  # Group 1) field, 2) email
 
-
-
 date_prefix = (
-    r'(?P<operator>date)'  # starts with date (dont capture)
-    '\s*'  # Zero or more
-    '(:|>=|<=|>|<)'  # Order of operators matters: > before >= won't capture equals
+    r'(?:date)'  # starts with date (dont capture)
+    r'\s*'  # Zero or more
+    r'(?P<operator>:|>=|<=|>|<)'  # Order of operators matters: > before >= won't capture equals
 )
 date = r'(?P<date>\d{4}/\d{2}/\d{2})'  # yyy/mm/dd format
 date_query = date_prefix + r'\s*' + date  # Group 1) operator 2) date
-
+print(date_query)
 
 def verify(user_in):
     # TODO: how to verify? One big regex is unpredicatable and likely error prone
