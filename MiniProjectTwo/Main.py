@@ -59,6 +59,7 @@ def main():
             quit_program = True
             continue
 
+        # TODO: CHeck for mode change
         if verify(user_in):
             dbms.resetQuery()
             for date_condition in re.finditer(date_query, user_in):
@@ -69,7 +70,7 @@ def main():
                 dbms.runTermQuery(term_condition['field'], term_condition['term'])
             for term_condition in re.finditer(term_query_without_prefix, user_in):
                 dbms.runTermQuery(None, term_condition['term'])
-            # TODO: Have default for empty result
+            # TODO: Determine how to handle an empty query (we may not even need to handle it - just an empty output)
             dbms.getResults()
         else:
             print("Your input contains an invalid query. Please try again.")
