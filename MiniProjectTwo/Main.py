@@ -4,25 +4,28 @@ import re
 mode_change = r'output=(?:(full)|(brief))'  # capture group 1) whole command 2) which mode
 
 term_query_with_prefix = (
-    r'((?:subj\s*:)'  # Has either subj zero or more whitespace and colon
-    r'|(?:body\s*:))'  # or body zero or more whitespace and colon
-    r'\s*'  # zero or more whitespace are prefix
-    r'(\w+%?)'  # word that optionally ends with %
+    r'(?P<field>'  # Captures field name
+    r'(?:subj\s*)|'  # Has either subj zero or more whitespace and colon
+    r'(?:body\s*))'  # or body zero or more whitespace and colon
+    r':\s*'  # zero or more whitespace are prefix
+    r'(?P<term>\w+%?)'  # word that optionally ends with %
     r'\s'  # space boundary (not \b)
 )
 term_query_without_prefix = (
     r'(?:^|\s+)'  # starts at beginning of line or with at least one space
-    r'(\w+%?)'  # Word optionally ending with %
+    r'(?P<term>\w+%?)'  # Word optionally ending with %
     r'\s'  # Space boundary
 )
 
 email_prefix = (
-    r'((?:from)|(?:to)|(?:cc)|(?:bcc))'  # one of address fields
+    r'(?P<field>'
+    r'(?:from)|(?:to)|(?:cc)|(?:bcc))'  # one of address fields
     r'\s?'  # zero or more spaces
     r':'  # semicolon
 )
 email = (
-    r'([\w.]+'  # one or more email chars
+    r'(?P<email>'
+    r'[\w.]+'  # one or more email chars
     r'@'  # at sign
     r'[\w.]+)'  # one or more email chars
 )
@@ -58,14 +61,14 @@ def main():
 
         if verify(user_in):
             dbms.resetQuery()
-            for date_condition in re.findall(date_query, user_in):
-                dbms.runDateQuery(date_condition[0], date_condition[1])
-            for email_condition in re.findall(email_query, user_in):
-                dbms.runEmailQuery(email_condition[0], email_condition[1])
-            for term_condition in re.findall(term_query_with_prefix, user_in):
-                dbms.runTermQuery(term_condition[0], term_condition[1])
-            for term_condition in re.findall(term_query_without_prefix, user_in):
-                dbms.runTermQuery(None, term_condition[1])
+            for date_condition in re.finditer(date_query, user_in):
+                dbms.runDateQuery(date_condition['operator'], date_condition['date'])
+            for email_condition in re.finditer(email_query, user_in):
+                dbms.runEmailQuery(email_condition['field'], email_condition['email'])
+            for term_condition in re.finditer(term_query_with_prefix, user_in):
+                dbms.runTermQuery(term_condition['field'], term_condition['term'])
+            for term_condition in re.finditer(term_query_without_prefix, user_in):
+                dbms.runTermQuery(None, term_condition['term'])
             # TODO: Have default for empty result
             dbms.getResults()
         else:
