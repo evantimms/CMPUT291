@@ -42,11 +42,6 @@ date_prefix = (
 date = r'(?P<date>\d{4}/\d{2}/\d{2})'  # yyy/mm/dd format
 date_query = date_prefix + r'\s*' + date  # Group 1) operator 2) date
 
-def verify(user_in):
-    # TODO: how to verify? One big regex is unpredicatable and likely error prone
-    return True
-
-
 def main(testQuery = None):
     quit_program = False
     full_output = False # Default output is brief
