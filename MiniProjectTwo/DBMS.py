@@ -73,7 +73,7 @@ class DBMS:
         while curr:
             # Get the values from the DB
             row_id = int(curr[1].decode())
-            row_field = ('body' if curr[0].decode() == 'b' else 'subj')
+            row_field = ('body' if curr[0].decode()[0] == 'b' else 'subj')
             row_term = re.search(r'[bs]-(.*)', curr[0].decode())[1]
 
             # Do partial or full match
@@ -96,6 +96,7 @@ class DBMS:
         """
         Prints all the results from the records database that correspond to id's mast_ids
         """
+        print("-----------------")
         for key in self.master_ids:
             rec = self.recs_DB.get(str(key).encode())
             if full_output:
@@ -105,6 +106,7 @@ class DBMS:
                 print(key, title)
 
         print("End of results.")
+        print("-----------------")
 
     def resetQuery(self):
         """

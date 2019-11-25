@@ -10,14 +10,16 @@ term_query_with_prefix = (
     r'(?:body\s*))'  # or body zero or more whitespace and colon
     r':\s*'  # zero or more whitespace are prefix
     r'(?P<term>\w+%?)'  # word that optionally ends with %
-    r'\s'  # space boundary (not \b)
+    r'\s*'  # space boundary (not \b)
 )
 term_query_without_prefix = (
     r'(?:^|\s+)'  # starts at beginning of line or with at least one space
     r'(?P<term>\w+%?)'  # Word optionally ending with %
-    r'\s'  # Space boundary
+    r'(?:\s|$)'  # Space boundary or end of line
 )
 
+print(term_query_with_prefix)
+print(term_query_without_prefix)
 email_prefix = (
     r'(?P<field>'
     r'(?:from)|(?:to)|(?:cc)|(?:bcc))'  # one of address fields

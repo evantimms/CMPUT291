@@ -3,18 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="c1a78add-8025-4b6d-91fb-5632e65c3243" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DBMS.py" beforeDir="false" afterPath="$PROJECT_DIR$/DBMS.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Main.py" beforeDir="false" afterPath="$PROJECT_DIR$/Main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PrepareFiles.py" beforeDir="false" afterPath="$PROJECT_DIR$/PrepareFiles.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/da.idx" beforeDir="false" afterPath="$PROJECT_DIR$/da.idx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dates.txt" beforeDir="false" afterPath="$PROJECT_DIR$/dates.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/em.idx" beforeDir="false" afterPath="$PROJECT_DIR$/em.idx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/emails.txt" beforeDir="false" afterPath="$PROJECT_DIR$/emails.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/re.idx" beforeDir="false" afterPath="$PROJECT_DIR$/re.idx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/recs.txt" beforeDir="false" afterPath="$PROJECT_DIR$/recs.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/te.idx" beforeDir="false" afterPath="$PROJECT_DIR$/te.idx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/terms.txt" beforeDir="false" afterPath="$PROJECT_DIR$/terms.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/thing.txt" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -146,6 +136,7 @@
       <workItem from="1574453958647" duration="117000" />
       <workItem from="1574455892569" duration="49000" />
       <workItem from="1574455956358" duration="2994000" />
+      <workItem from="1574703962168" duration="2609000" />
     </task>
     <servers />
   </component>
@@ -179,9 +170,10 @@
           <option name="timeStamp" value="7" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Main.py</url>
+          <condition expression="row_term == 'book'" language="Python" />
+          <url>file://$PROJECT_DIR$/DBMS.py</url>
           <line>76</line>
-          <option name="timeStamp" value="20" />
+          <option name="timeStamp" value="26" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
@@ -195,7 +187,7 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/MiniProjectTwo$DBMS.coverage" NAME="DBMS Coverage Results" MODIFIED="1574639017717" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/MiniProjectTwo$Main.coverage" NAME="Main Coverage Results" MODIFIED="1574639619247" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/MiniProjectTwo$Main.coverage" NAME="Main Coverage Results" MODIFIED="1574707783552" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/MiniProjectTwo$PrepareFiles.coverage" NAME="PrepareFiles Coverage Results" MODIFIED="1574630342948" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
