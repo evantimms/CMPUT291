@@ -18,8 +18,6 @@ term_query_without_prefix = (
     r'(?P<term>\w+%?)'  # Word optionally ending with %
 )
 
-print(term_query_with_prefix)
-print(term_query_without_prefix)
 email_prefix = (
     r'(?P<field>'
     r'(?:from)|(?:to)|(?:cc)|(?:bcc))'  # one of address fields
@@ -109,5 +107,4 @@ if __name__ == "__main__":
         main()
 
 
-# TODO: Finding &amp;
-# TODO: Intersection on terms only seems to grab first time
+# TODO: convert special characters in terms, but not rec

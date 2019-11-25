@@ -12,19 +12,30 @@ recs = open("recs.txt", "w")
 def write_to_terms(row, subject, body):
     # Raw string with comments to keep the regex readable
     term_pattern = (
-        r'\b'    # Beginning of word boundary
-        r'[\w-]' # alphanumeric, underscore, dash
+        r'\b'  # Beginning of word boundary
+        r'[\w-]'  # alphanumeric, underscore, dash
         r'{3,}'  # Ignore words with 2 or less characteres
-        r'\b'    # End of word boundary
+        r'\b'  # End of word boundary
     )
 
-    # Ignore &#.*;, &#\d;, &lt;, $gt; &amp;, &apos; and &quot;
-    subject_with_special_removed = re.sub(r'&.*?;', '', subject)
-    body_with_special_removed = re.sub(r'&.*?;', '', body)
+    subject_with_special_replaced = re.sub(r'&#\d*;', '', subject)
+    subject_with_special_replaced = subject_with_special_replaced.replace('&lt;', '<')
+    subject_with_special_replaced = subject_with_special_replaced.replace('&gt;', '>')
+    subject_with_special_replaced = subject_with_special_replaced.replace('&amp;', '&')
+    subject_with_special_replaced = subject_with_special_replaced.replace('&apos;', '\'')
+    subject_with_special_replaced = subject_with_special_replaced.replace('&quot;', '\"')
+
+
+    body_with_special_replaced = re.sub(r'&#\d*;', '', body)
+    body_with_special_replaced = body_with_special_replaced.replace('&lt;', '<')
+    body_with_special_replaced = body_with_special_replaced.replace('&gt;', '>')
+    body_with_special_replaced = body_with_special_replaced.replace('&amp;', '&')
+    body_with_special_replaced = body_with_special_replaced.replace('&apos;', '\'')
+    body_with_special_replaced = body_with_special_replaced.replace('&quot;', '\"')
 
     # Get terms
-    captured_subject_terms = re.findall(term_pattern, subject_with_special_removed)
-    captured_body_terms = re.findall(term_pattern, body_with_special_removed)
+    captured_subject_terms = re.findall(term_pattern, subject_with_special_replaced)
+    captured_body_terms = re.findall(term_pattern, body_with_special_replaced)
 
     # Print to file
     for subject_term in captured_subject_terms:
