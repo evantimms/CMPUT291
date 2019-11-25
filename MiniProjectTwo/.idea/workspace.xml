@@ -3,8 +3,18 @@
   <component name="ChangeListManager">
     <list default="true" id="c1a78add-8025-4b6d-91fb-5632e65c3243" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DBMS.py" beforeDir="false" afterPath="$PROJECT_DIR$/DBMS.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Main.py" beforeDir="false" afterPath="$PROJECT_DIR$/Main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PrepareFiles.py" beforeDir="false" afterPath="$PROJECT_DIR$/PrepareFiles.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/da.idx" beforeDir="false" afterPath="$PROJECT_DIR$/da.idx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dates.txt" beforeDir="false" afterPath="$PROJECT_DIR$/dates.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/em.idx" beforeDir="false" afterPath="$PROJECT_DIR$/em.idx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/emails.txt" beforeDir="false" afterPath="$PROJECT_DIR$/emails.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/re.idx" beforeDir="false" afterPath="$PROJECT_DIR$/re.idx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/recs.txt" beforeDir="false" afterPath="$PROJECT_DIR$/recs.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/te.idx" beforeDir="false" afterPath="$PROJECT_DIR$/te.idx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/terms.txt" beforeDir="false" afterPath="$PROJECT_DIR$/terms.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/thing.txt" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -29,6 +39,7 @@
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="com.intellij.ide.scratch.LRUPopupBuilder$1/New Scratch File" value="Python" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
@@ -169,7 +180,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Main.py</url>
-          <line>77</line>
+          <line>76</line>
           <option name="timeStamp" value="20" />
         </line-breakpoint>
       </breakpoints>

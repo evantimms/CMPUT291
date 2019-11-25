@@ -39,7 +39,6 @@ date_prefix = (
 )
 date = r'(?P<date>\d{4}/\d{2}/\d{2})'  # yyy/mm/dd format
 date_query = date_prefix + r'\s*' + date  # Group 1) operator 2) date
-print(date_query)
 
 def verify(user_in):
     # TODO: how to verify? One big regex is unpredicatable and likely error prone
@@ -113,3 +112,7 @@ if __name__ == "__main__":
         main()
 
 
+# TODO: Have to have space after command
+# TODO: Finding &amp;
+# TODO: Too many terms are matched (e.g. subj:basis) doesn't have basis in some subjects. Looks like its grabbing terms in body too (e.g. ignoring subj/body constraint)
+# TODO: Instersection doesn't always seem to work. "the desk" returns more than if just "desk" is searched
