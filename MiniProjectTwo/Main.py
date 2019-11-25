@@ -69,13 +69,13 @@ def main(testQuery = None):
 
         dbms.resetQuery()
         for date_condition in re.finditer(date_query, user_in):
-            dbms.runDateQuery(date_condition['operator'], date_condition['date'])
+            dbms.runDateQuery(date_condition.group('operator'), date_condition.group('date'))
         for email_condition in re.finditer(email_query, user_in):
-            dbms.runEmailQuery(email_condition['field'], email_condition['email'])
+            dbms.runEmailQuery(email_condition.group('field'), email_condition.group('email'))
         for term_condition in re.finditer(term_query_with_prefix, user_in):
-            dbms.runTermQuery(term_condition['field'], term_condition['term'])
+            dbms.runTermQuery(term_condition.group('field'), term_condition.group('term'))
         for term_condition in re.finditer(term_query_without_prefix, user_in):
-            dbms.runTermQuery(None, term_condition['term'])
+            dbms.runTermQuery(None, term_condition.group('term'))
         dbms.getResults(full_output)
 
     print("Thanks! Goodbye.")

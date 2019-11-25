@@ -50,8 +50,8 @@ class DBMS:
         res = set()
         while curr:
             row_id = int(curr[1].decode())
-            row_field = re.search(r'((?:to)|(?:from)|(?:cc)|(?:bcc))-', curr[0].decode())[1]
-            row_email = re.search(r'(?:(?:to)|(?:from)|(?:cc)|(?:bcc))-(.*)', curr[0].decode())[1]
+            row_field = re.search(r'((?:to)|(?:from)|(?:cc)|(?:bcc))-', curr[0].decode()).group(1)
+            row_email = re.search(r'(?:(?:to)|(?:from)|(?:cc)|(?:bcc))-(.*)', curr[0].decode()).group(1)
 
             # Add row if conditionals match
             terms_match = (re.fullmatch(row_email, email_address) is not None)
@@ -74,7 +74,7 @@ class DBMS:
             # Get the values from the DB
             row_id = int(curr[1].decode())
             row_field = ('body' if curr[0].decode()[0] == 'b' else 'subj')
-            row_term = re.search(r'[bs]-(.*)', curr[0].decode())[1]
+            row_term = re.search(r'[bs]-(.*)', curr[0].decode()).group(1)
 
             # Do partial or full match
             if term.endswith("%"):
