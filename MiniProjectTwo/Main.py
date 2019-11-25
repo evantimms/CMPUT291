@@ -14,8 +14,8 @@ term_query_with_prefix = (
 )
 term_query_without_prefix = (
     r'(?:^|\s+)'  # starts at beginning of line or with at least one space
+    r'(?!subj|body|to|cc|bcc|date|from)'  # prevents grabbing these words, which it will otherwise
     r'(?P<term>\w+%?)'  # Word optionally ending with %
-    r'(?:\s|$)'  # Space boundary or end of line
 )
 
 print(term_query_with_prefix)
@@ -114,7 +114,5 @@ if __name__ == "__main__":
         main()
 
 
-# TODO: Have to have space after command
 # TODO: Finding &amp;
-# TODO: Too many terms are matched (e.g. subj:basis) doesn't have basis in some subjects. Looks like its grabbing terms in body too (e.g. ignoring subj/body constraint)
-# TODO: Instersection doesn't always seem to work. "the desk" returns more than if just "desk" is searched
+# TODO: Intersection on terms only seems to grab first time
