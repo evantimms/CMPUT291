@@ -98,4 +98,3 @@ def main():
 if __name__ == "__main__":
     main()
 
-# TODO: Check that perl file replaces special characters with proper ones

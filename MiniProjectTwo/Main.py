@@ -105,6 +105,3 @@ if __name__ == "__main__":
                 print(e)
     else:
         main()
-
-
-# TODO: convert special characters in terms, but not rec

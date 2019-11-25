@@ -2,17 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c1a78add-8025-4b6d-91fb-5632e65c3243" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Main.py" beforeDir="false" afterPath="$PROJECT_DIR$/Main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PrepareFiles.py" beforeDir="false" afterPath="$PROJECT_DIR$/PrepareFiles.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/da.idx" beforeDir="false" afterPath="$PROJECT_DIR$/da.idx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dates.txt" beforeDir="false" afterPath="$PROJECT_DIR$/dates.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/em.idx" beforeDir="false" afterPath="$PROJECT_DIR$/em.idx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/emails.txt" beforeDir="false" afterPath="$PROJECT_DIR$/emails.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/re.idx" beforeDir="false" afterPath="$PROJECT_DIR$/re.idx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/recs.txt" beforeDir="false" afterPath="$PROJECT_DIR$/recs.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/te.idx" beforeDir="false" afterPath="$PROJECT_DIR$/te.idx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/terms.txt" beforeDir="false" afterPath="$PROJECT_DIR$/terms.txt" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -144,7 +135,7 @@
       <workItem from="1574453958647" duration="117000" />
       <workItem from="1574455892569" duration="49000" />
       <workItem from="1574455956358" duration="2994000" />
-      <workItem from="1574703962168" duration="5858000" />
+      <workItem from="1574703962168" duration="6198000" />
     </task>
     <servers />
   </component>
