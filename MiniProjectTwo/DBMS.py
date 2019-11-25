@@ -83,7 +83,7 @@ class DBMS:
                 terms_match = (re.fullmatch(term, row_term) is not None)
 
             # Add row if conditionals match
-            if field is None and terms_match:
+            if not field and terms_match:
                 res.add(row_id)
             elif row_field == field and terms_match:
                 res.add(row_id)
@@ -124,27 +124,3 @@ class DBMS:
         else:
             self.master_ids = self.master_ids.intersection(res)
         self.query_count += 1
-
-# Tests
-# dbms = DBMS()
-# dbms.runTermQuery("subj", "and%")
-# dbms.runEmailQuery("from", "phillip.allen@enron.com")
-
-# Date Query
-# dbms.runDateQuery("2000/10/02", ":")
-# dbms.getResults(True)
-# dbms.resetQuery()
-# dbms.runDateQuery("2000/10/02", ">")
-# dbms.getResults(True)
-# dbms.resetQuery()
-# dbms.runDateQuery("2000/10/02", "<")
-# dbms.getResults()
-# dbms.runDateQuery("2000/10/02", "<")
-# dbms.getResults(False)
-# dbms.resetQuery()
-# dbms.runDateQuery("2000/10/02", ">=")
-# dbms.getResults(False)
-# dbms.resetQuery()
-# dbms.runDateQuery("2000/10/02", "<=")
-# dbms.getResults(True)
-# dbms.resetQuery()
