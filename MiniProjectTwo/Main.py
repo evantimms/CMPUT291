@@ -1,6 +1,7 @@
 from DBMS import DBMS
 import sys
 import re
+import time
 
 mode_change = r'output=(?:(full)|(brief))'  # capture group 1) whole command 2) which mode
 
@@ -68,6 +69,7 @@ def main(testQuery = None):
                 raise ValueError("Invalid argument for output: {}".format(output))
 
         dbms.resetQuery()
+        start = time.time()
         for date_condition in re.finditer(date_query, user_in):
             dbms.runDateQuery(date_condition.group('operator'), date_condition.group('date'))
         for email_condition in re.finditer(email_query, user_in):
@@ -76,7 +78,9 @@ def main(testQuery = None):
             dbms.runTermQuery(term_condition.group('field'), term_condition.group('term'))
         for term_condition in re.finditer(term_query_without_prefix, user_in):
             dbms.runTermQuery(None, term_condition.group('term'))
+        end = time.time()
         dbms.getResults(full_output)
+        print(end - start)
 
     print("Thanks! Goodbye.")
 

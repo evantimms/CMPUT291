@@ -55,7 +55,8 @@ class DBMS:
                 row_email = re.search(r'(?:(?:to)|(?:from)|(?:cc)|(?:bcc))-(.*)', curr[0].decode()).group(1)
 
             # Add row if conditionals match
-                terms_match = (re.fullmatch(row_email, email_address) is not None)
+                # terms_match = (re.fullmatch(row_email, email_address) is not None)
+                terms_match = row_email == email_address
                 if row_field == field and terms_match:
                     res.add(row_id)
             except:
@@ -76,13 +77,16 @@ class DBMS:
             # Get the values from the DB
             row_id = int(curr[1].decode())
             row_field = ('body' if curr[0].decode()[0] == 'b' else 'subj')
-            row_term = re.search(r'[bs]-(.*)', curr[0].decode()).group(1)
+            row_term = curr[0].decode().split("-")[1]
+            # row_term = re.search(r'[bs]-(.*)', curr[0].decode()).group(1)
 
             # Do partial or full match
             if term.endswith("%"):
-                terms_match = (re.match(term[:-1], row_term) is not None)
+                terms_match = term[:-1] == row_term
+            #     terms_match = (re.match(term[:-1], row_term) is not None)
             else:
-                terms_match = (re.fullmatch(term, row_term) is not None)
+                terms_match = term == row_term
+            #     terms_match = (re.fullmatch(term, row_term) is not None)
 
             # Add row if conditionals match
             if not field and terms_match:
