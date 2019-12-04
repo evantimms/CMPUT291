@@ -49,15 +49,17 @@ class DBMS:
         curr = self.emails_cursor.first()
         res = set()
         while curr:
-            row_id = int(curr[1].decode())
-            row_field = re.search(r'((?:to)|(?:from)|(?:cc)|(?:bcc))-', curr[0].decode()).group(1)
-            row_email = re.search(r'(?:(?:to)|(?:from)|(?:cc)|(?:bcc))-(.*)', curr[0].decode()).group(1)
+            try:
+                row_id = int(curr[1].decode())
+                row_field = re.search(r'((?:to)|(?:from)|(?:cc)|(?:bcc))-', curr[0].decode()).group(1)
+                row_email = re.search(r'(?:(?:to)|(?:from)|(?:cc)|(?:bcc))-(.*)', curr[0].decode()).group(1)
 
             # Add row if conditionals match
-            terms_match = (re.fullmatch(row_email, email_address) is not None)
-            if row_field == field and terms_match:
-                res.add(row_id)
-
+                terms_match = (re.fullmatch(row_email, email_address) is not None)
+                if row_field == field and terms_match:
+                    res.add(row_id)
+            except:
+                pass
             curr = self.emails_cursor.next()
 
         self._addToMasterIds(res)
